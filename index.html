@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes" />
   <title>Social.i — Creative Marketing Curator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +27,14 @@
     }
 
     html {
-      overflow-x: hidden;
+      overflow-x: hidden; /* Prevent horizontal scroll at normal zoom */
+    }
+
+    /* Allow horizontal scroll when zoomed in (for accessibility) */
+    @media (min-resolution: 1.1dppx) {
+      html {
+        overflow-x: auto;
+      }
     }
 
     body {
@@ -1185,21 +1192,51 @@
       }
     }
 
-    /* GSAP Animation Optimizations */
+    /* GSAP Animation Optimizations - GPU acceleration for all animated elements */
     .hero-inner,
+    .hero .logo-name,
+    .hero .subtitle,
+    .hero .tag,
+    .hero-bg,
+    .expertise-col,
     .card,
     .client-box,
     .case-row,
+    .case-brand,
+    .case-text-block,
+    .award-item,
+    .award-icon svg,
+    .awards-image img,
     .dot,
     .stage,
-    .connecting-line-fill {
+    .connecting-line-fill,
+    .contact-title,
+    .contact-name-first,
+    .contact-name-last,
+    .contact-phone,
+    .contact-email,
+    .contact-instagram,
+    .contact-image img,
+    .footer-inner > *,
+    #expertise h2,
+    #clients h2,
+    #case-studies h2,
+    #about h2,
+    #about p,
+    #about img,
+    .process-label,
+    .process-heading {
       will-change: transform, opacity;
+    }
+
+    /* Hide the tagline completely */
+    .hero .tag {
+      display: none !important;
     }
 
     /* Initial animation states - hidden before GSAP animates them in */
     body:not(.gsap-ready) .hero .logo-name,
-    body:not(.gsap-ready) .hero .subtitle,
-    body:not(.gsap-ready) .hero .tag {
+    body:not(.gsap-ready) .hero .subtitle {
       opacity: 0;
     }
 
@@ -1287,7 +1324,7 @@
             style="height: clamp(100px, 16vw, 220px); width: auto;" />
         </h1>
         <div class="subtitle">Creative Marketing Curator</div>
-        <p class="tag" style="display:none;">Transforming Visions into Exceptional Brand Experiences.</p>
+        <p class="tag">Transforming Visions into Exceptional Brand Experiences.</p>
       </div>
     </section>
 

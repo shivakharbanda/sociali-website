@@ -13,10 +13,24 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 // UTILITY FUNCTIONS
 // ========================================
 
-// Detect mobile device
+// Feature detection for mobile devices (NO user-agent sniffing)
 function isMobileDevice() {
-  return window.innerWidth < 768 ||
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  // Check for touch as primary input method
+  const hasTouchScreen = (
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints > 0) ||
+    (navigator.msMaxTouchPoints > 0)
+  );
+
+  // Check viewport characteristics
+  const hasSmallViewport = window.innerWidth < 768;
+
+  // Check for coarse pointer (touch) as primary input - most reliable
+  const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
+  // Mobile device if: touch-capable with small viewport OR coarse pointer
+  // This correctly identifies real mobile devices vs browser emulation
+  return (hasTouchScreen && hasSmallViewport) || hasCoarsePointer;
 }
 
 // Alias for backward compatibility
@@ -43,24 +57,51 @@ if (isMobileDevice()) {
   });
 }
 
-// Handle iOS address bar appearing/disappearing
+// Handle iOS address bar and viewport changes properly
+// IMPORTANT: Only refresh ScrollTrigger when scrolling stops, not during scroll
 let lastViewportHeight = window.innerHeight;
-let resizeTimeout;
+let viewportResizeTimeout;
+let isScrolling = false;
+let scrollTimeout;
 
+// Detect when scrolling starts
 window.addEventListener('scroll', () => {
-  const currentHeight = window.innerHeight;
+  isScrolling = true;
+  clearTimeout(scrollTimeout);
 
-  // Significant height change (> 80px) = address bar toggle
-  if (Math.abs(currentHeight - lastViewportHeight) > 80) {
-    lastViewportHeight = currentHeight;
-
-    // Debounce refresh
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 150);
-  }
+  // Mark scrolling as stopped after 150ms of no scroll events
+  scrollTimeout = setTimeout(() => {
+    isScrolling = false;
+  }, 150);
 }, { passive: true });
+
+// Use visualViewport API if available (more accurate for mobile)
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    // Only refresh if we're not actively scrolling
+    if (!isScrolling) {
+      clearTimeout(viewportResizeTimeout);
+      viewportResizeTimeout = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 200);
+    }
+  });
+} else {
+  // Fallback: Monitor window height changes (orientation, address bar)
+  window.addEventListener('resize', () => {
+    const currentHeight = window.innerHeight;
+    const heightDiff = Math.abs(currentHeight - lastViewportHeight);
+
+    // Significant height change AND not actively scrolling
+    if (heightDiff > 100 && !isScrolling) {
+      lastViewportHeight = currentHeight;
+      clearTimeout(viewportResizeTimeout);
+      viewportResizeTimeout = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 250);
+    }
+  }, { passive: true });
+}
 
 // ========================================
 // RESPONSIVE TRIGGER HELPERS
@@ -107,7 +148,7 @@ function getTriggerEnd() {
 function initHeroAnimations() {
   if (prefersReducedMotion) {
     // Show everything immediately if reduced motion is preferred
-    gsap.set(['.hero .logo-name', '.hero .subtitle', '.hero .tag'], { opacity: 1 });
+    gsap.set(['.hero .logo-name', '.hero .subtitle'], { opacity: 1 });
     return;
   }
 
@@ -123,8 +164,8 @@ function initHeroAnimations() {
     ease: 'power3.out'
   }, 0)
 
-    // All hero text elements come in together
-    .from(['.hero .logo-name img', '.hero .subtitle', '.hero .tag'], {
+    // Hero text elements come in together (tagline is hidden via CSS)
+    .from(['.hero .logo-name img', '.hero .subtitle'], {
       opacity: 0,
       y: 40,
       duration: 1.2,
@@ -417,6 +458,9 @@ function isVerticalLayout() {
   return window.innerWidth <= 1200;
 }
 
+// Store timeline globally so we can kill it if needed
+let processTimeline = null;
+
 function playTimelineAnimation() {
   const dots = document.querySelectorAll('.dot');
   const stages = document.querySelectorAll('.stage');
@@ -426,40 +470,53 @@ function playTimelineAnimation() {
 
   const isVertical = isVerticalLayout();
 
+  // Kill previous timeline if it exists
+  if (processTimeline) {
+    processTimeline.kill();
+  }
+
   // Reset everything first
   dots.forEach(dot => dot.classList.remove('active'));
   stages.forEach(stage => stage.classList.remove('active'));
 
   if (isVertical) {
-    lineFill.style.height = '0%';
-    lineFill.style.width = '100%';
+    gsap.set(lineFill, { height: '0%', width: '100%' });
   } else {
-    lineFill.style.width = '0%';
-    lineFill.style.height = '100%';
+    gsap.set(lineFill, { width: '0%', height: '100%' });
   }
 
-  // Animate dots and line sequentially (CSS transitions handle the smoothness)
-  dots.forEach((dot, index) => {
-    setTimeout(() => {
-      // Add active class - CSS transition will animate the scale
-      dot.classList.add('active');
+  // Create GSAP timeline (replaces setTimeout + CSS transitions)
+  processTimeline = gsap.timeline();
 
-      // Update line fill - CSS transition will animate the width/height
-      const progress = ((index + 1) / dots.length) * 100;
-      if (isVertical) {
-        lineFill.style.height = progress + '%';
-      } else {
-        lineFill.style.width = progress + '%';
-      }
-    }, index * 700);
+  // Animate dots and line sequentially with GSAP
+  dots.forEach((dot, index) => {
+    const progress = ((index + 1) / dots.length) * 100;
+
+    processTimeline.add(() => {
+      dot.classList.add('active');
+    }, index * 0.7);
+
+    // Animate line fill with GSAP (not direct style manipulation)
+    if (isVertical) {
+      processTimeline.to(lineFill, {
+        height: progress + '%',
+        duration: 0.5,
+        ease: 'power2.out'
+      }, index * 0.7);
+    } else {
+      processTimeline.to(lineFill, {
+        width: progress + '%',
+        duration: 0.5,
+        ease: 'power2.out'
+      }, index * 0.7);
+    }
   });
 
-  // Animate stages sequentially (CSS transitions handle the smoothness)
+  // Animate stages sequentially with GSAP
   stages.forEach((stage, index) => {
-    setTimeout(() => {
-      // Add active class - CSS transition will animate opacity and transform
+    processTimeline.add(() => {
       stage.classList.add('active');
-    }, 750 + (index * 700));
+    }, 0.75 + (index * 0.7));
   });
 }
 
@@ -527,8 +584,8 @@ function initClientAnimations() {
       }
     }
 
-    // MOBILE: Skip desaturate animation (expensive filter)
-    // Just set images to color immediately
+    // MOBILE: Set images to color immediately (skip expensive animation)
+    // CSS sets grayscale(100%) by default, so we override it to show color
     clientImages.forEach(img => {
       img.style.filter = 'grayscale(0%)';
     });
@@ -606,45 +663,21 @@ function initCaseStudiesAnimations() {
     const textBlocks = row.querySelectorAll('.case-text-block');
 
     if (isMobileDevice()) {
-      // MOBILE: Simpler, faster animations
+      // MOBILE: Batch all elements in row into ONE ScrollTrigger for performance
+      const allElements = [img, brand, ...Array.from(textBlocks)].filter(Boolean);
 
-      if (img) {
-        gsap.from(img, {
+      if (allElements.length > 0) {
+        gsap.from(allElements, {
           scrollTrigger: {
             trigger: row,
             start: getTriggerStart('top 80%'),
             toggleActions: 'play none none none'
           },
           opacity: 0,
-          scale: 1.05,  // Subtle scale only
-          duration: 0.6
-        });
-      }
-
-      if (brand) {
-        gsap.from(brand, {
-          scrollTrigger: {
-            trigger: brand,
-            start: getTriggerStart('top 80%'),
-            toggleActions: 'play none none none'
-          },
-          opacity: 0,
-          y: 20,  // Smaller movement
-          duration: 0.5
-        });
-      }
-
-      if (textBlocks.length > 0) {
-        gsap.from(textBlocks, {
-          scrollTrigger: {
-            trigger: brand || row,
-            start: getTriggerStart('top 80%'),
-            toggleActions: 'play none none none'
-          },
-          opacity: 0,
-          y: 15,
-          stagger: 0.1,  // Faster stagger
-          duration: 0.5
+          y: 20,  // Simple upward movement
+          stagger: 0.08,  // Quick stagger
+          duration: 0.5,
+          ease: 'power2.out'
         });
       }
 
@@ -794,75 +827,98 @@ function initAwardsAnimations() {
   const awardItems = awardsSection.querySelectorAll('.award-item');
   const trophyIcons = awardsSection.querySelectorAll('.award-icon svg');
 
-  // Header animation - fade + scale + slide-up
-  if (header) {
-    gsap.from(header, {
-      scrollTrigger: {
-        trigger: header,
-        start: getTriggerStart('top 85%'),
-        end: getTriggerEnd(),
-        toggleActions: 'play none none reverse'
-      },
-      opacity: 0,
-      y: 30,
-      scale: 0.9,
-      duration: 0.8,
-      ease: 'back.out(1.5)'
-    });
-  }
+  if (isMobileDevice()) {
+    // MOBILE: Batch ALL awards section elements into ONE ScrollTrigger
+    const allElements = [header, image, ...Array.from(awardItems)].filter(Boolean);
 
-  // Image animation - blur-to-clear + scale + fade
-  if (image) {
-    gsap.from(image, {
-      scrollTrigger: {
-        trigger: image,
-        start: getTriggerStart('top 80%'),
-        end: getTriggerEnd(),
-        toggleActions: 'play none none reverse'
-      },
-      opacity: 0,
-      scale: 1.2,
-      filter: 'blur(20px)',
-      duration: 1.2,
-      ease: 'power3.out'
-    });
-  }
-
-  // Award items animation - staggered slide-up + fade
-  if (awardItems.length > 0) {
-    awardItems.forEach((item, index) => {
-      gsap.from(item, {
+    if (allElements.length > 0) {
+      gsap.from(allElements, {
         scrollTrigger: {
-          trigger: item,
+          trigger: awardsSection,
+          start: getTriggerStart('top 80%'),
+          toggleActions: 'play none none none'
+        },
+        opacity: 0,
+        y: 20,
+        stagger: 0.1,
+        duration: 0.6,
+        ease: 'power2.out'
+      });
+    }
+
+  } else {
+    // DESKTOP: Keep fancy individual animations
+
+    // Header animation - fade + scale + slide-up
+    if (header) {
+      gsap.from(header, {
+        scrollTrigger: {
+          trigger: header,
           start: getTriggerStart('top 85%'),
           end: getTriggerEnd(),
           toggleActions: 'play none none reverse'
         },
         opacity: 0,
-        y: 40,
+        y: 30,
+        scale: 0.9,
         duration: 0.8,
-        delay: index * 0.12,
-        ease: 'power2.out'
+        ease: 'back.out(1.5)'
       });
-    });
-  }
+    }
 
-  // Trophy icons animation - scale bounce effect
-  if (trophyIcons.length > 0) {
-    trophyIcons.forEach((icon, index) => {
-      gsap.from(icon, {
+    // Image animation - blur-to-clear + scale + fade
+    if (image) {
+      gsap.from(image, {
         scrollTrigger: {
-          trigger: icon.closest('.award-item'),
-          start: getTriggerStart('top 85%'),
+          trigger: image,
+          start: getTriggerStart('top 80%'),
           end: getTriggerEnd(),
           toggleActions: 'play none none reverse'
         },
-        scale: 0,
-        duration: 0.6,
-        delay: (index * 0.12) + 0.2,
-        ease: 'back.out(1.7)'
+        opacity: 0,
+        scale: 1.2,
+        filter: 'blur(20px)',
+        duration: 1.2,
+        ease: 'power3.out'
       });
-    });
+    }
+
+    // Award items animation - staggered slide-up + fade
+    if (awardItems.length > 0) {
+      awardItems.forEach((item, index) => {
+        gsap.from(item, {
+          scrollTrigger: {
+            trigger: item,
+            start: getTriggerStart('top 85%'),
+            end: getTriggerEnd(),
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          delay: index * 0.12,
+          ease: 'power2.out'
+        });
+      });
+    }
+
+    // Trophy icons animation - scale bounce effect
+    if (trophyIcons.length > 0) {
+      trophyIcons.forEach((icon, index) => {
+        gsap.from(icon, {
+          scrollTrigger: {
+            trigger: icon.closest('.award-item'),
+            start: getTriggerStart('top 85%'),
+            end: getTriggerEnd(),
+            toggleActions: 'play none none reverse'
+          },
+          scale: 0,
+          duration: 0.6,
+          delay: (index * 0.12) + 0.2,
+          ease: 'back.out(1.7)'
+        });
+      });
+    }
   }
 }
 
@@ -1108,20 +1164,15 @@ function init() {
   initCaseStudiesAnimations();
   initAboutAnimations();
   initMagneticCursor();
-  // Refresh ScrollTrigger after all images are loaded
-  refreshAfterImages();
-  observeDOMChanges();
   initMicroInteractions();
   initContactAnimations();
   initFooterAnimations();
   initHeadingAnimations();
 
-  // Refresh ScrollTrigger after all animations are set
-  // Initial refresh
-  ScrollTrigger.refresh();
-
-  // Signal that GSAP is ready
-  document.body.classList.add('gsap-ready');
+  // CRITICAL: Wait for images to load BEFORE refreshing ScrollTrigger
+  // This ensures trigger positions are calculated correctly
+  refreshAfterImages();
+  observeDOMChanges();
 }
 
 // ========================================
