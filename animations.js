@@ -13,14 +13,92 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 // UTILITY FUNCTIONS
 // ========================================
 
-// Detect if device is mobile/tablet
-const isMobile = () => window.innerWidth < 768;
+// Detect mobile device
+function isMobileDevice() {
+  return window.innerWidth < 768 ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Alias for backward compatibility
+const isMobile = isMobileDevice;
 
 // Initialize GSAP with optimal settings
 gsap.config({
   force3D: true,
   nullTargetWarn: false
 });
+
+// ScrollTrigger global configuration
+ScrollTrigger.config({
+  limitCallbacks: true,     // Throttle callbacks during fast scroll
+  syncInterval: 0,          // Sync with native refresh rate
+  autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load,resize'
+});
+
+// Mobile-specific configuration
+if (isMobileDevice()) {
+  ScrollTrigger.config({
+    ignoreMobileResize: true,  // Don't refresh on iOS address bar resize
+    autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load'  // Exclude resize
+  });
+}
+
+// Handle iOS address bar appearing/disappearing
+let lastViewportHeight = window.innerHeight;
+let resizeTimeout;
+
+window.addEventListener('scroll', () => {
+  const currentHeight = window.innerHeight;
+
+  // Significant height change (> 80px) = address bar toggle
+  if (Math.abs(currentHeight - lastViewportHeight) > 80) {
+    lastViewportHeight = currentHeight;
+
+    // Debounce refresh
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+  }
+}, { passive: true });
+
+// ========================================
+// RESPONSIVE TRIGGER HELPERS
+// ========================================
+
+// Responsive trigger position helper
+function getTriggerStart(desktopStart = 'top 80%') {
+  const viewportWidth = window.innerWidth;
+
+  // Extra small phones (iPhone SE, etc.)
+  if (viewportWidth < 375) {
+    return 'top 95%';  // Very late trigger
+  }
+
+  // Small phones
+  if (viewportWidth < 480) {
+    return 'top 92%';  // Later trigger
+  }
+
+  // Standard phones
+  if (viewportWidth < 768) {
+    return 'top 88%';  // Slightly later trigger
+  }
+
+  // Tablets
+  if (viewportWidth < 1024) {
+    return 'top 85%';
+  }
+
+  // Desktop - parse and return original value
+  return desktopStart;
+}
+
+// Helper for end positions (relative to viewport)
+function getTriggerEnd() {
+  const viewportHeight = window.innerHeight;
+  return `+=${viewportHeight * 0.3}`;  // 30% of viewport
+}
 
 // ========================================
 // 1. HERO ENTRANCE ANIMATIONS (PRIORITY)
@@ -45,14 +123,14 @@ function initHeroAnimations() {
     ease: 'power3.out'
   }, 0)
 
-  // All hero text elements come in together
-  .from(['.hero .logo-name img', '.hero .subtitle', '.hero .tag'], {
-    opacity: 0,
-    y: 40,
-    duration: 1.2,
-    ease: 'power3.out',
-    stagger: 0
-  }, 0.3);
+    // All hero text elements come in together
+    .from(['.hero .logo-name img', '.hero .subtitle', '.hero .tag'], {
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power3.out',
+      stagger: 0
+    }, 0.3);
 
   // Ken Burns effect on hero background (starts after blur clears)
   gsap.to('.hero-bg', {
@@ -271,8 +349,8 @@ function initExpertiseAnimations() {
     gsap.from(card, {
       scrollTrigger: {
         trigger: card,
-        start: 'top 85%',
-        end: 'top 50%',
+        start: getTriggerStart('top 85%'),
+        end: getTriggerEnd(),
         toggleActions: 'play none none reverse'
       },
       opacity: 0,
@@ -423,41 +501,77 @@ function initClientAnimations() {
   const clientBoxes = document.querySelectorAll('.client-box');
   const clientImages = document.querySelectorAll('.client-box img');
 
-  // Shuffle/randomized entrance
-  const shuffledIndexes = Array.from({ length: clientBoxes.length }, (_, i) => i)
-    .sort(() => Math.random() - 0.5);
+  if (isMobileDevice()) {
+    // MOBILE: Batch animations into groups
+    const batchSize = 6;  // Animate 6 at a time
 
-  clientBoxes.forEach((box, index) => {
-    gsap.from(box, {
-      scrollTrigger: {
-        trigger: box,
-        start: 'top 85%',
-        toggleActions: 'play none none reverse'
-      },
-      opacity: 0,
-      scale: 0.7,
-      rotation: shuffledIndexes.indexOf(index) % 2 === 0 ? 10 : -10,
-      duration: 0.8,
-      delay: shuffledIndexes.indexOf(index) * 0.08,
-      ease: 'back.out(1.5)'
+    for (let batch = 0; batch < Math.ceil(clientBoxes.length / batchSize); batch++) {
+      const startIdx = batch * batchSize;
+      const endIdx = Math.min(startIdx + batchSize, clientBoxes.length);
+      const batchBoxes = Array.from(clientBoxes).slice(startIdx, endIdx);
+
+      if (batchBoxes.length > 0) {
+        gsap.from(batchBoxes, {
+          scrollTrigger: {
+            trigger: batchBoxes[0],  // Trigger on first in batch
+            start: getTriggerStart('top 85%'),
+            toggleActions: 'play none none none'  // Don't reverse on mobile
+          },
+          opacity: 0,
+          scale: 0.85,  // Less dramatic scale
+          rotation: 0,   // No rotation (expensive on mobile)
+          duration: 0.5,
+          stagger: 0.08,  // Stagger within batch
+          ease: 'power2.out'  // Simpler easing
+        });
+      }
+    }
+
+    // MOBILE: Skip desaturate animation (expensive filter)
+    // Just set images to color immediately
+    clientImages.forEach(img => {
+      img.style.filter = 'grayscale(0%)';
     });
-  });
 
-  // Desaturate to color on scroll
-  clientImages.forEach(img => {
-    gsap.to(img, {
-      scrollTrigger: {
-        trigger: img,
-        start: 'top 80%',
-        toggleActions: 'play none none reverse'
-      },
-      filter: 'grayscale(0%)',
-      duration: 1,
-      ease: 'power2.out'
+  } else {
+    // DESKTOP: Keep existing fancy animations
+
+    // Shuffle/randomized entrance
+    const shuffledIndexes = Array.from({ length: clientBoxes.length }, (_, i) => i)
+      .sort(() => Math.random() - 0.5);
+
+    clientBoxes.forEach((box, index) => {
+      gsap.from(box, {
+        scrollTrigger: {
+          trigger: box,
+          start: getTriggerStart('top 85%'),
+          end: getTriggerEnd(),
+          toggleActions: 'play none none reverse'
+        },
+        opacity: 0,
+        scale: 0.7,
+        rotation: shuffledIndexes.indexOf(index) % 2 === 0 ? 10 : -10,
+        duration: 0.8,
+        delay: shuffledIndexes.indexOf(index) * 0.08,
+        ease: 'back.out(1.5)'
+      });
     });
 
-    // Scale on hover
-    if (!isMobile()) {
+    // Desaturate to color on scroll
+    clientImages.forEach(img => {
+      gsap.to(img, {
+        scrollTrigger: {
+          trigger: img,
+          start: getTriggerStart('top 80%'),
+          end: getTriggerEnd(),
+          toggleActions: 'play none none reverse'
+        },
+        filter: 'grayscale(0%)',
+        duration: 1,
+        ease: 'power2.out'
+      });
+
+      // Scale on hover
       img.parentElement.addEventListener('mouseenter', () => {
         gsap.to(img, {
           scale: 1.1,
@@ -475,8 +589,8 @@ function initClientAnimations() {
           ease: 'power2.out'
         });
       });
-    }
-  });
+    });
+  }
 }
 
 // ========================================
@@ -491,55 +605,103 @@ function initCaseStudiesAnimations() {
     const brand = row.querySelector('.case-brand');
     const textBlocks = row.querySelectorAll('.case-text-block');
 
-    // Image entrance with blur
-    gsap.from(img, {
-      scrollTrigger: {
-        trigger: row,
-        start: 'top 80%',
-        toggleActions: 'play none none reverse'
-      },
-      opacity: 0,
-      scale: 1.2,
-      filter: 'blur(20px)',
-      duration: 1.2,
-      ease: 'power3.out'
-    });
+    if (isMobileDevice()) {
+      // MOBILE: Simpler, faster animations
 
-    // Brand header animation
-    if (brand) {
-      gsap.from(brand, {
+      if (img) {
+        gsap.from(img, {
+          scrollTrigger: {
+            trigger: row,
+            start: getTriggerStart('top 80%'),
+            toggleActions: 'play none none none'
+          },
+          opacity: 0,
+          scale: 1.05,  // Subtle scale only
+          duration: 0.6
+        });
+      }
+
+      if (brand) {
+        gsap.from(brand, {
+          scrollTrigger: {
+            trigger: brand,
+            start: getTriggerStart('top 80%'),
+            toggleActions: 'play none none none'
+          },
+          opacity: 0,
+          y: 20,  // Smaller movement
+          duration: 0.5
+        });
+      }
+
+      if (textBlocks.length > 0) {
+        gsap.from(textBlocks, {
+          scrollTrigger: {
+            trigger: brand || row,
+            start: getTriggerStart('top 80%'),
+            toggleActions: 'play none none none'
+          },
+          opacity: 0,
+          y: 15,
+          stagger: 0.1,  // Faster stagger
+          duration: 0.5
+        });
+      }
+
+    } else {
+      // DESKTOP: Keep existing fancy animations
+
+      // Image entrance with blur
+      gsap.from(img, {
         scrollTrigger: {
-          trigger: brand,
-          start: 'top 80%',
+          trigger: row,
+          start: getTriggerStart('top 80%'),
+          end: getTriggerEnd(),
           toggleActions: 'play none none reverse'
         },
         opacity: 0,
-        y: 40,
-        duration: 0.8,
+        scale: 1.2,
+        filter: 'blur(20px)',
+        duration: 1.2,
         ease: 'power3.out'
       });
-    }
 
-    // Text blocks staggered animation
-    if (textBlocks.length > 0) {
-      textBlocks.forEach((block, blockIndex) => {
-        gsap.from(block, {
+      // Brand header animation
+      if (brand) {
+        gsap.from(brand, {
           scrollTrigger: {
-            trigger: block,
-            start: 'top 80%',
+            trigger: brand,
+            start: getTriggerStart('top 80%'),
+            end: getTriggerEnd(),
             toggleActions: 'play none none reverse'
           },
           opacity: 0,
-          y: 30,
+          y: 40,
           duration: 0.8,
-          delay: blockIndex * 0.15,
-          ease: 'power2.out'
+          ease: 'power3.out'
         });
-      });
-    }
+      }
 
-    // Dramatic hover effect (desktop only)
-    if (!isMobile()) {
+      // Text blocks staggered animation
+      if (textBlocks.length > 0) {
+        textBlocks.forEach((block, blockIndex) => {
+          gsap.from(block, {
+            scrollTrigger: {
+              trigger: block,
+              start: getTriggerStart('top 80%'),
+              end: getTriggerEnd(),
+              toggleActions: 'play none none reverse'
+            },
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            delay: blockIndex * 0.15,
+            ease: 'power2.out'
+          });
+        });
+      }
+
+      // Dramatic hover effect (desktop only)
       row.addEventListener('mouseenter', () => {
         gsap.to(img, {
           scale: 1.05,
@@ -586,7 +748,8 @@ function initAboutAnimations() {
   gsap.from(aboutContent, {
     scrollTrigger: {
       trigger: aboutSection,
-      start: 'top 75%',
+      start: getTriggerStart('top 75%'),
+      end: getTriggerEnd(),
       toggleActions: 'play none none reverse'
     },
     opacity: 0,
@@ -600,7 +763,8 @@ function initAboutAnimations() {
   gsap.from(aboutImage, {
     scrollTrigger: {
       trigger: aboutImage,
-      start: 'top 80%',
+      start: getTriggerStart('top 80%'),
+      end: getTriggerEnd(),
       toggleActions: 'play none none reverse'
     },
     opacity: 0,
@@ -635,7 +799,8 @@ function initAwardsAnimations() {
     gsap.from(header, {
       scrollTrigger: {
         trigger: header,
-        start: 'top 85%',
+        start: getTriggerStart('top 85%'),
+        end: getTriggerEnd(),
         toggleActions: 'play none none reverse'
       },
       opacity: 0,
@@ -651,7 +816,8 @@ function initAwardsAnimations() {
     gsap.from(image, {
       scrollTrigger: {
         trigger: image,
-        start: 'top 80%',
+        start: getTriggerStart('top 80%'),
+        end: getTriggerEnd(),
         toggleActions: 'play none none reverse'
       },
       opacity: 0,
@@ -668,7 +834,8 @@ function initAwardsAnimations() {
       gsap.from(item, {
         scrollTrigger: {
           trigger: item,
-          start: 'top 85%',
+          start: getTriggerStart('top 85%'),
+          end: getTriggerEnd(),
           toggleActions: 'play none none reverse'
         },
         opacity: 0,
@@ -686,7 +853,8 @@ function initAwardsAnimations() {
       gsap.from(icon, {
         scrollTrigger: {
           trigger: icon.closest('.award-item'),
-          start: 'top 85%',
+          start: getTriggerStart('top 85%'),
+          end: getTriggerEnd(),
           toggleActions: 'play none none reverse'
         },
         scale: 0,
@@ -810,7 +978,8 @@ function initFooterAnimations() {
   gsap.from(footerElements, {
     scrollTrigger: {
       trigger: footer,
-      start: 'top 90%',
+      start: getTriggerStart('top 90%'),
+      end: getTriggerEnd(),
       toggleActions: 'play none none reverse'
     },
     opacity: 0,
@@ -843,7 +1012,7 @@ function initContactAnimations() {
   // Title fade + slide-up
   if (title) {
     gsap.from(title, {
-      scrollTrigger: { trigger: title, start: 'top 85%', toggleActions: 'play none none reverse' },
+      scrollTrigger: { trigger: title, start: getTriggerStart('top 85%'), end: getTriggerEnd(), toggleActions: 'play none none reverse' },
       opacity: 0, y: 30, duration: 0.8, ease: 'power3.out'
     });
   }
@@ -851,7 +1020,7 @@ function initContactAnimations() {
   // Names staggered entrance
   if (firstName && lastName) {
     gsap.from([firstName, lastName], {
-      scrollTrigger: { trigger: firstName, start: 'top 85%', toggleActions: 'play none none reverse' },
+      scrollTrigger: { trigger: firstName, start: getTriggerStart('top 85%'), end: getTriggerEnd(), toggleActions: 'play none none reverse' },
       opacity: 0, y: 40, stagger: 0.15, duration: 1, ease: 'power3.out'
     });
   }
@@ -860,7 +1029,7 @@ function initContactAnimations() {
   if (contactLinks.length > 0) {
     contactLinks.forEach((link, index) => {
       gsap.from(link, {
-        scrollTrigger: { trigger: link, start: 'top 85%', toggleActions: 'play none none reverse' },
+        scrollTrigger: { trigger: link, start: getTriggerStart('top 85%'), end: getTriggerEnd(), toggleActions: 'play none none reverse' },
         opacity: 0, x: -30, duration: 0.8, delay: index * 0.12, ease: 'power2.out'
       });
     });
@@ -869,7 +1038,7 @@ function initContactAnimations() {
   // Image blur-to-clear + scale
   if (contactImage) {
     gsap.from(contactImage, {
-      scrollTrigger: { trigger: contactImage, start: 'top 80%', toggleActions: 'play none none reverse' },
+      scrollTrigger: { trigger: contactImage, start: getTriggerStart('top 80%'), end: getTriggerEnd(), toggleActions: 'play none none reverse' },
       opacity: 0, scale: 1.1, filter: 'blur(10px)', duration: 1.2, ease: 'power3.out'
     });
   }
@@ -880,13 +1049,14 @@ function initContactAnimations() {
 // ========================================
 
 function initHeadingAnimations() {
-  const sectionHeadings = document.querySelectorAll('#expertise h2, #clients h2, #case-studies h2');
+  const sectionHeadings = document.querySelectorAll('#expertise h2, #clients h2, #case-studies h2:not(.case-brand):not(.process-heading)');
 
   sectionHeadings.forEach(heading => {
     gsap.from(heading, {
       scrollTrigger: {
         trigger: heading,
-        start: 'top 85%',
+        start: getTriggerStart('top 85%'),
+        end: getTriggerEnd(),
         toggleActions: 'play none none reverse'
       },
       opacity: 0,
@@ -905,7 +1075,8 @@ function initHeadingAnimations() {
     gsap.from([processLabel, processHeading], {
       scrollTrigger: {
         trigger: '.process-header',
-        start: 'top 80%',
+        start: getTriggerStart('top 80%'),
+        end: getTriggerEnd(),
         toggleActions: 'play none none reverse'
       },
       opacity: 0,
@@ -937,13 +1108,20 @@ function init() {
   initCaseStudiesAnimations();
   initAboutAnimations();
   initMagneticCursor();
+  // Refresh ScrollTrigger after all images are loaded
+  refreshAfterImages();
+  observeDOMChanges();
   initMicroInteractions();
   initContactAnimations();
   initFooterAnimations();
   initHeadingAnimations();
 
   // Refresh ScrollTrigger after all animations are set
+  // Initial refresh
   ScrollTrigger.refresh();
+
+  // Signal that GSAP is ready
+  document.body.classList.add('gsap-ready');
 }
 
 // ========================================
@@ -954,6 +1132,57 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
   init();
+}
+
+// Wait for all images to load before finalizing ScrollTrigger positions
+function refreshAfterImages() {
+  const images = document.querySelectorAll('img');
+  let loadedCount = 0;
+  const totalImages = images.length;
+
+  if (totalImages === 0) {
+    return;
+  }
+
+  const onImageLoad = () => {
+    loadedCount++;
+    if (loadedCount === totalImages) {
+      console.log('All images loaded, refreshing ScrollTrigger');
+      ScrollTrigger.refresh();
+    }
+  };
+
+  images.forEach(img => {
+    if (img.complete) {
+      onImageLoad();
+    } else {
+      img.addEventListener('load', onImageLoad);
+      img.addEventListener('error', onImageLoad);
+    }
+  });
+
+  // Fallback timeout
+  setTimeout(() => ScrollTrigger.refresh(), 3000);
+}
+
+// Watch for DOM changes (lazy loaded images, dynamic content)
+function observeDOMChanges() {
+  let mutationTimeout;
+
+  const observer = new MutationObserver(() => {
+    clearTimeout(mutationTimeout);
+    mutationTimeout = setTimeout(() => {
+      console.log('DOM changed, refreshing ScrollTrigger');
+      ScrollTrigger.refresh();
+    }, 500);  // Debounce refreshes
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['src', 'style']  // Watch for image src/style changes
+  });
 }
 
 // Refresh ScrollTrigger on window resize (debounced)
