@@ -1193,11 +1193,15 @@
     }
 
     /* GSAP Animation Optimizations - GPU acceleration for all animated elements */
+    /* Hero background needs filter in will-change for mobile unblur animation */
+    .hero-bg {
+      will-change: transform, opacity, filter;
+    }
+
     .hero-inner,
     .hero .logo-name,
     .hero .subtitle,
     .hero .tag,
-    .hero-bg,
     .expertise-col,
     .card,
     .client-box,
