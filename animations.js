@@ -156,13 +156,20 @@ function initHeroAnimations() {
     defaults: { ease: 'power4.out' }
   });
 
-  // Blur-to-clear background transition (starts immediately)
-  tl.to('.hero-bg', {
-    filter: 'blur(0px) saturate(1.2)',
-    opacity: 0.85,
+  // Background focus effect - GPU accelerated (scale + opacity + light filter)
+  tl.from('.hero-bg', {
+    scale: 1.15,               // Start zoomed in
+    opacity: 0.2,              // Start dim
+    filter: 'saturate(0.8)',   // Start desaturated
     duration: 1.5,
     ease: 'power3.out'
   }, 0)
+    .to('.hero-bg', {
+      filter: 'saturate(1.2)',  // Boost saturation (final state)
+      opacity: 0.85,             // Brighten (final state)
+      duration: 1.5,
+      ease: 'power3.out'
+    }, 0)
 
     // Hero text elements come in together (tagline is hidden via CSS)
     .from(['.hero .logo-name img', '.hero .subtitle'], {

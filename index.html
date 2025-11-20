@@ -277,8 +277,8 @@
       inset: 0;
       background-position: center;
       background-size: cover;
-      opacity: 0.3;
-      filter: blur(20px) saturate(.95);
+      opacity: 0.2;
+      filter: saturate(0.8);
       pointer-events: none;
     }
 
@@ -1193,9 +1193,8 @@
     }
 
     /* GSAP Animation Optimizations - GPU acceleration for all animated elements */
-    /* Hero background needs filter in will-change for mobile unblur animation */
     .hero-bg {
-      will-change: transform, opacity, filter;
+      will-change: transform, opacity;
     }
 
     .hero-inner,
