@@ -498,10 +498,11 @@
       position: absolute;
       top: 0;
       left: 0;
-      height: 0; /* INITIAL STATE - no fill (will animate) */
-      width: 0; /* INITIAL STATE - no fill (will animate) */
       background: var(--social-orange);
       z-index: 1;
+      /* Desktop (horizontal): animate width, height is 100% */
+      height: 100%;
+      width: 0;
     }
 
     .horizontal-wrapper {
@@ -561,7 +562,7 @@
       text-align: justify;
     }
 
-    /* Clients - FINAL STATE (all visible, color) */
+    /* Clients - INITIAL STATE (animate individually on scroll) */
     .clients {
       display: grid;
       gap: 1.5rem;
@@ -577,14 +578,15 @@
       align-items: center;
       justify-content: center;
       background: transparent;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: scale(0.7); /* INITIAL STATE - smaller (like original) */
       aspect-ratio: 3/2;
     }
 
     .client-box img {
       max-width: 80%;
       max-height: 80%;
-      filter: grayscale(0%); /* FINAL STATE - color */
+      filter: grayscale(100%); /* INITIAL STATE - grayscale (desktop) */
       object-fit: contain;
     }
 
@@ -1853,10 +1855,13 @@
 
           // 1. Animate the LINE ONCE - continuous draw from 0 to 100%
           const totalDuration = (dots.length - 1) * 0.5 + 0.5; // 2.5 seconds
+          const animateProperty = isVertical ? 'height' : 'width';
+
+          // Animate with explicit from/to values
           animate(
             lineFill,
             {
-              [isVertical ? 'height' : 'width']: '100%'
+              [animateProperty]: ['0%', '100%'] // Explicit start and end
             },
             {
               duration: totalDuration,
@@ -1901,6 +1906,57 @@
               );
             }
           });
+        });
+
+        // Client logos - SHUFFLED entrance with staggered delays (like original)
+        // Create shuffled order ONCE for popcorn effect
+        const clientBoxes = document.querySelectorAll('.client-box');
+        const shuffledIndexes = Array.from({ length: clientBoxes.length }, (_, i) => i)
+          .sort(() => Math.random() - 0.5);
+
+        observeElement('.client-box', function(box) {
+          const img = box.querySelector('img');
+          const index = Array.from(clientBoxes).indexOf(box);
+          const shufflePosition = shuffledIndexes.indexOf(index);
+
+          // Rotation based on shuffle position (alternating ±10°)
+          const rotation = shufflePosition % 2 === 0 ? 10 : -10;
+
+          // FASTER stagger - 50ms per position (was 80ms)
+          const delay = shufflePosition * 0.05;
+
+          // 1. Box entrance (fade + scale + rotate) - FASTER
+          animate(
+            box,
+            {
+              opacity: [0, 1],
+              scale: [0.7, 1],
+              transform: [`rotate(${rotation}deg)`, 'rotate(0deg)']
+            },
+            {
+              duration: 0.5, // FASTER (was 0.8s)
+              delay: delay,
+              easing: [0.175, 0.885, 0.32, 1.275] // back.out(1.5) equivalent
+            }
+          );
+
+          // 2. Image grayscale to color - FASTER & tighter
+          if (img) {
+            animate(
+              img,
+              {
+                filter: ['grayscale(100%)', 'grayscale(0%)']
+              },
+              {
+                duration: 0.6, // FASTER (was 1.0s)
+                delay: delay + 0.1, // TIGHTER (was +0.2s)
+                easing: 'ease-out'
+              }
+            );
+          }
+        }, {
+          rootMargin: '-10% 0px',
+          threshold: 0.2
         });
       });
     })();
