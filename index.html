@@ -252,7 +252,7 @@
       background: rgba(240, 70, 0, 0.04)
     }
 
-    /* HERO - FINAL STATE (no blur, bright, saturated) */
+    /* HERO - INITIAL STATE (will animate with Motion One) */
     .hero {
       min-height: 38.5vh;
       display: flex;
@@ -267,8 +267,9 @@
       inset: 0;
       background-position: center;
       background-size: cover;
-      opacity: 0.85; /* FINAL STATE - bright */
-      filter: saturate(1.2); /* FINAL STATE - vibrant, NO BLUR */
+      opacity: 0.2; /* INITIAL STATE - dim (will animate to 0.85) */
+      filter: saturate(1.2); /* NO BLUR - GPU friendly */
+      transform: scale(1.15); /* INITIAL STATE - zoomed in (will animate to 1) */
       pointer-events: none;
     }
 
@@ -284,7 +285,8 @@
       font-weight: 900;
       display: inline-block;
       line-height: 0.88;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden (will animate to 1) */
+      transform: translateY(30px); /* INITIAL STATE - below (will animate to 0) */
     }
 
     .hero .logo-name img {
@@ -298,7 +300,8 @@
       letter-spacing: 0.09em;
       font-size: clamp(1.3rem, 3.5vw, 2rem);
       text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6), 0 1px 4px rgba(0, 0, 0, 0.8);
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden (will animate to 1) */
+      transform: translateY(20px); /* INITIAL STATE - below (will animate to 0) */
     }
 
     /* Hide tagline */
@@ -1665,7 +1668,10 @@
     </div>
   </footer>
 
-  <!-- Simple mobile menu toggle - NO GSAP -->
+  <!-- Motion One - Lightweight animation library (5KB) -->
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
+
+  <!-- Simple mobile menu toggle -->
   <script>
     // Simple mobile menu toggle
     (function() {
@@ -1699,6 +1705,68 @@
           });
         });
       }
+    })();
+  </script>
+
+  <!-- Hero Section POC Animation -->
+  <script>
+    // Hero animation using Motion One
+    (function() {
+      // Wait for Motion library to load
+      if (typeof Motion === 'undefined') {
+        console.error('Motion library not loaded');
+        return;
+      }
+
+      const { animate } = Motion;
+
+      // Wait for page to fully load (including images)
+      window.addEventListener('load', function() {
+
+        // 1. Hero background reveal
+        // Zooms in from 1.15x scale while fading in
+        animate(
+          '.hero-bg',
+          {
+            scale: [1.15, 1],
+            opacity: [0.2, 0.85]
+          },
+          {
+            duration: 1.5,
+            easing: 'ease-out'
+          }
+        );
+
+        // 2. Logo reveal (starts after 0.3s)
+        // Fades in + slides up from below
+        animate(
+          '.hero .logo-name',
+          {
+            opacity: [0, 1],
+            transform: ['translateY(30px)', 'translateY(0)']
+          },
+          {
+            duration: 0.8,
+            delay: 0.3,
+            easing: 'ease-out'
+          }
+        );
+
+        // 3. Subtitle reveal (starts after 0.5s)
+        // Fades in + slides up from below
+        animate(
+          '.hero .subtitle',
+          {
+            opacity: [0, 1],
+            transform: ['translateY(20px)', 'translateY(0)']
+          },
+          {
+            duration: 0.8,
+            delay: 0.5,
+            easing: 'ease-out'
+          }
+        );
+      });
     })();
   </script>
 </body>
