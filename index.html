@@ -590,7 +590,7 @@
       object-fit: contain;
     }
 
-    /* Awards section - FINAL STATE (all visible) */
+    /* Awards section - INITIAL STATE */
     .awards-content {
       display: block;
       padding: 0.5rem 0;
@@ -606,7 +606,8 @@
       width: 100%;
       height: auto;
       border-radius: 0;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateX(-30px); /* INITIAL STATE - from left */
     }
 
     .awards-list {
@@ -620,7 +621,8 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
       align-items: flex-start;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(20px); /* INITIAL STATE - below */
     }
 
     .award-item:last-child {
@@ -658,7 +660,7 @@
       line-height: 1.4;
     }
 
-    /* Case studies - FINAL STATE (all visible) */
+    /* Case studies - INITIAL STATE */
     .case-row {
       display: grid;
       gap: 0.5rem;
@@ -667,7 +669,6 @@
       margin-bottom: 3rem;
       background: var(--bg);
       padding: 2rem 0 2rem 0;
-      opacity: 1; /* FINAL STATE - visible */
     }
 
     .case-row:last-child {
@@ -689,6 +690,8 @@
       border-radius: 0;
       filter: grayscale(0%);
       display: block;
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: scale(1.1); /* INITIAL STATE - zoomed (desktop) */
     }
 
     .case-content {
@@ -702,6 +705,8 @@
       margin: 0 0 1rem 0;
       line-height: 1.1;
       font-family: var(--font-body);
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(40px); /* INITIAL STATE - below (desktop) */
     }
 
     .case-content .brand-highlight {
@@ -722,7 +727,8 @@
 
     .case-text-block {
       margin: 0;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(30px); /* INITIAL STATE - below (desktop) */
     }
 
     .case-text-block h4 {
@@ -744,7 +750,7 @@
       letter-spacing: 0.02em;
     }
 
-    /* Contact Section - FINAL STATE (all visible) */
+    /* Contact Section - INITIAL STATE */
     .contact-layout {
       display: grid;
       grid-template-columns: 1fr;
@@ -767,7 +773,8 @@
       margin: 0 0 0.8rem 0;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(30px); /* INITIAL STATE - below */
     }
 
     .contact-name-first {
@@ -778,7 +785,8 @@
       margin: 0;
       line-height: 0.9;
       letter-spacing: -0.02em;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(40px); /* INITIAL STATE - below */
     }
 
     .contact-name-last {
@@ -789,7 +797,8 @@
       margin: 0.2rem 0 1.5rem 0;
       line-height: 0.9;
       letter-spacing: -0.02em;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(40px); /* INITIAL STATE - below */
     }
 
     .contact-phone,
@@ -805,7 +814,8 @@
       margin-bottom: 0.5rem;
       font-weight: 400;
       transition: opacity 0.3s ease;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateX(-30px); /* INITIAL STATE - from left */
     }
 
     .contact-phone:hover,
@@ -837,7 +847,8 @@
       width: 100%;
       height: auto;
       object-fit: contain;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: scale(1.1); /* INITIAL STATE - zoomed */
     }
 
     /* Footer - FINAL STATE (visible) */
@@ -862,6 +873,18 @@
     .muted {
       color: rgba(38, 38, 38, 0.6);
       font-size: 0.92rem;
+    }
+
+    /* Mobile: case studies simpler initial state */
+    @media(max-width:767px) {
+      .case-row .case-image img {
+        transform: translateY(20px); /* Mobile slide (not scale) */
+      }
+
+      .case-content .case-brand,
+      .case-text-block {
+        transform: translateY(20px); /* Consistent mobile offset */
+      }
     }
 
     /* DESKTOP UPGRADES */
@@ -1956,6 +1979,208 @@
           }
         }, {
           rootMargin: '-10% 0px',
+          threshold: 0.2
+        });
+
+        // Awards section - image + staggered award items
+        observeElement('#awards', function(section) {
+          // Get the awards image and all award items
+          const image = section.querySelector('.awards-image img');
+          const awardItems = section.querySelectorAll('.award-item');
+
+          // 1. Image fades in and slides from left
+          if (image) {
+            animate(
+              image,
+              {
+                opacity: [0, 1],
+                transform: ['translateX(-30px)', 'translateX(0)']
+              },
+              {
+                duration: 0.7,
+                easing: 'ease-out'
+              }
+            );
+          }
+
+          // 2. Award items fade in and slide up with stagger
+          awardItems.forEach((item, index) => {
+            animate(
+              item,
+              {
+                opacity: [0, 1],
+                transform: ['translateY(20px)', 'translateY(0)']
+              },
+              {
+                duration: 0.5,
+                delay: 0.3 + (index * 0.1), // Start after image, 100ms stagger
+                easing: 'ease-out'
+              }
+            );
+          });
+        }, {
+          rootMargin: '-10% 0px',  // Same as client logos (proven to work)
+          threshold: 0.2            // Same as client logos
+        });
+
+        // Case Studies - observe each row individually (following original pattern)
+        observeElement('.case-row', function(row) {
+          const img = row.querySelector('.case-image img');
+          const brand = row.querySelector('.case-brand');
+          const textBlocks = row.querySelectorAll('.case-text-block');
+          const isMobile = window.innerWidth < 768;
+
+          if (isMobile) {
+            // MOBILE: Batch all elements in row for performance (like original)
+            const allElements = [img, brand, ...Array.from(textBlocks)].filter(Boolean);
+
+            if (allElements.length > 0) {
+              allElements.forEach((el, index) => {
+                animate(
+                  el,
+                  {
+                    opacity: [0, 1],
+                    transform: ['translateY(20px)', 'translateY(0)']
+                  },
+                  {
+                    duration: 0.5,
+                    delay: index * 0.08, // Quick stagger like original
+                    easing: 'ease-out'
+                  }
+                );
+              });
+            }
+
+          } else {
+            // DESKTOP: Individual animations (NO BLUR - use scale instead)
+
+            // Image entrance with scale
+            if (img) {
+              animate(
+                img,
+                {
+                  opacity: [0, 1],
+                  scale: [1.1, 1] // Subtle zoom (no blur)
+                },
+                {
+                  duration: 0.8,
+                  easing: 'ease-out'
+                }
+              );
+            }
+
+            // Brand header
+            if (brand) {
+              animate(
+                brand,
+                {
+                  opacity: [0, 1],
+                  transform: ['translateY(40px)', 'translateY(0)']
+                },
+                {
+                  duration: 0.8,
+                  delay: 0.2,
+                  easing: 'ease-out'
+                }
+              );
+            }
+
+            // Text blocks staggered
+            textBlocks.forEach((block, index) => {
+              animate(
+                block,
+                {
+                  opacity: [0, 1],
+                  transform: ['translateY(30px)', 'translateY(0)']
+                },
+                {
+                  duration: 0.8,
+                  delay: 0.4 + (index * 0.15), // Like original
+                  easing: 'ease-out'
+                }
+              );
+            });
+          }
+        }, {
+          rootMargin: '-10% 0px',  // Proven settings
+          threshold: 0.2
+        });
+
+        // Contact section - following original pattern exactly
+        observeElement('#contact-section', function(section) {
+          const title = section.querySelector('.contact-title');
+          const firstName = section.querySelector('.contact-name-first');
+          const lastName = section.querySelector('.contact-name-last');
+          const contactLinks = section.querySelectorAll('.contact-phone, .contact-email, .contact-instagram');
+          const contactImage = section.querySelector('.contact-image img');
+
+          // 1. Title fade + slide-up (like original)
+          if (title) {
+            animate(
+              title,
+              {
+                opacity: [0, 1],
+                transform: ['translateY(30px)', 'translateY(0)']
+              },
+              {
+                duration: 0.8,
+                easing: 'ease-out'
+              }
+            );
+          }
+
+          // 2. Names staggered entrance (like original)
+          if (firstName && lastName) {
+            [firstName, lastName].forEach((name, index) => {
+              animate(
+                name,
+                {
+                  opacity: [0, 1],
+                  transform: ['translateY(40px)', 'translateY(0)']
+                },
+                {
+                  duration: 1.0,
+                  delay: index * 0.15, // 150ms stagger like original
+                  easing: 'ease-out'
+                }
+              );
+            });
+          }
+
+          // 3. Contact links slide-in from left (like original)
+          if (contactLinks.length > 0) {
+            contactLinks.forEach((link, index) => {
+              animate(
+                link,
+                {
+                  opacity: [0, 1],
+                  transform: ['translateX(-30px)', 'translateX(0)']
+                },
+                {
+                  duration: 0.8,
+                  delay: index * 0.12, // 120ms stagger like original
+                  easing: 'ease-out'
+                }
+              );
+            });
+          }
+
+          // 4. Image scale (skip blur for mobile compatibility)
+          if (contactImage) {
+            animate(
+              contactImage,
+              {
+                opacity: [0, 1],
+                scale: [1.1, 1] // Subtle zoom (no blur)
+              },
+              {
+                duration: 1.2,
+                easing: 'ease-out'
+              }
+            );
+          }
+        }, {
+          rootMargin: '-10% 0px',  // Proven settings
           threshold: 0.2
         });
       });
