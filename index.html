@@ -309,7 +309,14 @@
       display: none !important;
     }
 
-    /* About section - everything visible */
+    /* About section - INITIAL STATE (will animate on scroll) */
+    #about h2,
+    #about p,
+    #about img {
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(30px); /* INITIAL STATE - below */
+    }
+
     .two-col {
       display: block;
     }
@@ -1708,8 +1715,31 @@
     })();
   </script>
 
-  <!-- Hero Section POC Animation -->
+  <!-- Animation Scripts -->
   <script>
+    // Intersection Observer helper for scroll-triggered animations
+    function observeElement(selector, animationFn, options = {}) {
+      const defaultOptions = {
+        root: null,
+        rootMargin: '-10% 0px', // Trigger when 10% visible
+        threshold: 0.15
+      };
+
+      const observerOptions = { ...defaultOptions, ...options };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animationFn(entry.target);
+            observer.unobserve(entry.target); // Animate once
+          }
+        });
+      }, observerOptions);
+
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => observer.observe(el));
+    }
+
     // Hero animation using Motion One
     (function() {
       // Wait for Motion library to load
@@ -1766,6 +1796,32 @@
             easing: 'ease-out'
           }
         );
+
+        // About section animation
+        observeElement('#about', function(section) {
+          // Get all animatable elements in order
+          const heading = section.querySelector('h2');
+          const paragraphs = section.querySelectorAll('p');
+          const image = section.querySelector('img');
+
+          const allElements = [heading, ...paragraphs, image].filter(Boolean);
+
+          // Animate all elements with stagger
+          allElements.forEach((el, index) => {
+            animate(
+              el,
+              {
+                opacity: [0, 1],
+                transform: ['translateY(30px)', 'translateY(0)']
+              },
+              {
+                duration: 0.6,
+                delay: index * 0.15, // 150ms stagger between each element
+                easing: 'ease-out'
+              }
+            );
+          });
+        });
       });
     })();
   </script>
