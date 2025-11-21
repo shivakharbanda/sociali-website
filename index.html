@@ -1844,17 +1844,29 @@
           threshold: 0.1
         });
 
-        // Process Timeline - Sequential animation
+        // Process Timeline - Sequential animation with continuous line draw
         observeElement('.timeline-wrapper', function(timeline) {
           const dots = timeline.querySelectorAll('.dot');
           const stages = timeline.querySelectorAll('.stage');
           const lineFill = timeline.querySelector('.connecting-line-fill');
           const isVertical = window.innerWidth <= 1200;
 
-          // Animate each dot + stage sequentially
+          // 1. Animate the LINE ONCE - continuous draw from 0 to 100%
+          const totalDuration = (dots.length - 1) * 0.5 + 0.5; // 2.5 seconds
+          animate(
+            lineFill,
+            {
+              [isVertical ? 'height' : 'width']: '100%'
+            },
+            {
+              duration: totalDuration,
+              easing: 'linear' // Smooth constant speed draw
+            }
+          );
+
+          // 2. Dots and stages pop in at intervals while line draws
           dots.forEach((dot, index) => {
             const delay = index * 0.5; // 500ms between each stage
-            const progress = ((index + 1) / dots.length) * 100;
 
             // Dot appears with scale effect
             animate(
@@ -1862,19 +1874,6 @@
               {
                 scale: [0, 1],
                 opacity: [0, 1]
-              },
-              {
-                duration: 0.4,
-                delay: delay,
-                easing: 'ease-out'
-              }
-            );
-
-            // Line fills to this dot
-            animate(
-              lineFill,
-              {
-                [isVertical ? 'height' : 'width']: progress + '%'
               },
               {
                 duration: 0.4,
