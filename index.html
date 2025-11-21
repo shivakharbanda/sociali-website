@@ -395,7 +395,8 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      opacity: 1; /* FINAL STATE - visible */
+      opacity: 0; /* INITIAL STATE - hidden (animates individually when visible) */
+      transform: translateY(40px); /* INITIAL STATE - below */
     }
 
     .expertise-col img {
@@ -1821,6 +1822,25 @@
               }
             );
           });
+        });
+
+        // Expertise section - individual card animations
+        // Each card animates when IT enters viewport (perfect for mobile stacking)
+        observeElement('.expertise-col', function(card) {
+          animate(
+            card,
+            {
+              opacity: [0, 1],
+              transform: ['translateY(40px)', 'translateY(0)']
+            },
+            {
+              duration: 0.7,
+              easing: 'ease-out'
+            }
+          );
+        }, {
+          rootMargin: '-5% 0px', // Trigger earlier (when 5% visible)
+          threshold: 0.1
         });
       });
     })();
