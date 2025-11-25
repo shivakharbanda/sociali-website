@@ -660,94 +660,183 @@
       line-height: 1.4;
     }
 
-    /* Case studies - INITIAL STATE */
-    .case-row {
-      display: grid;
-      gap: 0.5rem;
-      grid-template-columns: 1fr;
-      align-items: start;
-      margin-bottom: 3rem;
-      background: var(--bg);
-      padding: 2rem 0 2rem 0;
-    }
-
-    .case-row:last-child {
-      margin-bottom: 0;
-    }
-
-    .case-row .case-image {
-      width: 100%;
+    /* Case studies - Tab Navigation */
+    .case-studies-tabs {
+      position: relative;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
+      gap: 1.5rem;
+      border-bottom: 1px solid rgba(38, 38, 38, 0.1);
+      padding: 0 0 1rem 0;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
     }
 
-    .case-row .case-image img {
-      width: 100%;
-      height: auto;
-      max-width: 300px;
-      object-fit: contain;
-      border-radius: 0;
-      filter: grayscale(0%);
-      display: block;
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: scale(1.1); /* INITIAL STATE - zoomed (desktop) */
-    }
-
-    .case-content {
-      display: block;
-      padding-right: 1.5rem;
-    }
-
-    .case-content .case-brand {
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      font-weight: 700;
-      margin: 0 0 1rem 0;
-      line-height: 1.1;
+    .tab {
+      background: transparent;
+      border: none;
       font-family: var(--font-body);
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: translateY(40px); /* INITIAL STATE - below (desktop) */
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(38, 38, 38, 0.5);
+      cursor: pointer;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: color 0.3s ease;
     }
 
-    .case-content .brand-highlight {
+    .tab:hover {
+      color: rgba(38, 38, 38, 0.8);
+    }
+
+    .tab.active {
       color: var(--social-orange);
-      font-weight: 700;
     }
 
-    .case-content .brand-secondary {
-      color: var(--text);
-      font-weight: 400;
+    .tab-indicator {
+      position: absolute;
+      bottom: -1px;
+      height: 2px;
+      background: var(--social-orange);
+      transition: left 0.3s ease, width 0.3s ease;
     }
 
-    .case-text-blocks {
+    /* Tab Panels */
+    .category-panel {
+      display: none;
+      opacity: 0;
+      position: relative;
+    }
+
+    .category-panel.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Case Grid - Two Column Layout */
+    .case-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 3rem;
+      position: relative;
     }
 
-    .case-text-block {
-      margin: 0;
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: translateY(30px); /* INITIAL STATE - below (desktop) */
+    /* Vertical Divider (Desktop Only) */
+    .vertical-divider {
+      display: none;
     }
 
-    .case-text-block h4 {
-      font-family: var(--font-body);
-      font-size: 0.75rem;
+    /* Case Card Structure */
+    .case-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .case-image-wrapper {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .case-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.7s ease, transform 0.7s ease;
+      display: block;
+    }
+
+    .case-card:hover .case-image-wrapper img {
+      filter: grayscale(0%);
+      transform: scale(1.05);
+    }
+
+    .case-badge {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: var(--social-orange);
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.15em;
       text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .case-header {
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(38, 38, 38, 0.1);
+    }
+
+    .case-header h3 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .client-name {
+      color: var(--text);
+      display: inline;
+    }
+
+    .project-name {
+      color: var(--social-orange);
+      display: inline;
+    }
+
+    .case-content-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .content-block h4 {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text);
       margin: 0 0 0.75rem 0;
+    }
+
+    .content-block p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      text-align: justify;
+    }
+
+    .content-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(38, 38, 38, 0.1);
+    }
+
+    .outcome-block {
+      background: rgba(255, 255, 255, 0.5);
+      border-left: 4px solid var(--social-orange);
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-radius: 2px;
+    }
+
+    .outcome-block h4 {
       color: var(--text);
     }
 
-    .case-text-block p {
-      margin: 0;
-      font-size: 0.85rem;
-      line-height: 1.8;
-      color: var(--text);
-      text-align: justify;
-      letter-spacing: 0.02em;
+    .outcome-block p {
+      font-weight: 600;
     }
 
     /* Contact Section - INITIAL STATE */
@@ -875,15 +964,37 @@
       font-size: 0.92rem;
     }
 
-    /* Mobile: case studies simpler initial state */
-    @media(max-width:767px) {
-      .case-row .case-image img {
-        transform: translateY(20px); /* Mobile slide (not scale) */
+    /* Desktop: Two-column case studies grid */
+    @media(min-width:1024px) {
+      .case-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 5rem;
       }
 
-      .case-content .case-brand,
-      .case-text-block {
-        transform: translateY(20px); /* Consistent mobile offset */
+      .vertical-divider {
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 1px;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(38, 38, 38, 0.2) 20%,
+          rgba(38, 38, 38, 0.2) 80%,
+          transparent
+        );
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      .case-studies-tabs {
+        gap: 2.5rem;
+      }
+
+      .tab {
+        font-size: 0.9rem;
       }
     }
 
@@ -1550,70 +1661,227 @@
         </div>
       </div>
 
-      <div class="case-row">
-        <div class="case-image">
-          <img alt="Case Study" src="assets/images/case_studies/elioe.png">
-        </div>
-        <div class="case-content">
-          <h2 class="case-brand">
-            <span class="brand-highlight">Elioe</span> <span class="brand-secondary">by Watsons</span>
-          </h2>
-          <div class="case-text-blocks">
-            <div class="case-text-block">
-              <p>In Malaysia's beauty market, CR8 launched Elioe by Watsons as premium yet accessible skincare, driving
-                in-store traffic and online sales.</p>
-            </div>
-            <div class="case-text-block">
-              <p>A virtual media briefing brought the story to life, featuring executive insights and product deep
-                dives, securing features in leading beauty and lifestyle outlets amplified the message.</p>
-            </div>
-            <div class="case-text-block">
-              <p>The campaign's objectives were crystal clear: spark widespread awareness, cement Elioe as affordable
-                luxury, and boost sales through targeted traffic. CR8 kicked things off with a press release and media
-                kit that highlighted the brand's unique value—innovative formulas meeting everyday needs.</p>
-            </div>
-            <div class="case-text-block">
-              <p>The payoff was evident in heightened engagement and a strong growth foundation. In an era where
-                skincare is self-care, CR8's approach reminded us that smart PR isn't just about launches—it's about
-                lasting impressions that convert curiosity into loyalty.</p>
-            </div>
-          </div>
-        </div>
+      <!-- Tab Navigation -->
+      <div class="case-studies-tabs">
+        <button class="tab active" data-category="branding">Strategic Branding</button>
+        <button class="tab" data-category="pr">Public Relations</button>
+        <button class="tab" data-category="digital">Digital Presence</button>
+        <div class="tab-indicator"></div>
       </div>
 
-      <div class="case-row">
-        <div class="case-image">
-          <img alt="Case Study" src="assets/images/case_studies/biome.png">
-        </div>
-        <div class="case-content">
-          <h2 class="case-brand">
-            <span class="brand-secondary">AMILI</span> <span class="brand-highlight">Bio+Me</span>
-          </h2>
-          <div class="case-text-blocks">
-            <div class="case-text-block">
-              <h4>CLIENT CONTEXT</h4>
-              <p>AMILI and Bio+Me sought to create a recognizable brand that communicated the science of gut health in a
-                simple, human way.</p>
+      <!-- Tab Content -->
+      <div class="case-studies-content">
+
+        <!-- Strategic Branding Panel -->
+        <div class="category-panel active" data-category="branding">
+          <div class="case-grid">
+            <!-- Card 1: AMILI Bio+Me -->
+            <div class="case-card">
+              <div class="case-image-wrapper">
+                <img src="assets/images/case_studies/biome.png" alt="AMILI Bio+Me Case Study">
+                <span class="case-badge">CASE STUDY 01</span>
+              </div>
+              <div class="case-header">
+                <h3>
+                  <span class="client-name">AMILI</span> <span class="project-name">Bio+Me</span>
+                </h3>
+              </div>
+              <div class="case-content-grid">
+                <div class="content-block">
+                  <h4>CLIENT CONTEXT</h4>
+                  <p>AMILI and Bio+Me sought to create a recognizable brand that communicated the science of gut health in a simple, human way.</p>
+                </div>
+                <div class="content-block">
+                  <h4>CHALLENGE</h4>
+                  <p>To make complex microbiome insights accessible while differentiating in a fast-growing wellness market.</p>
+                </div>
+                <div class="content-divider"></div>
+                <div class="content-block">
+                  <h4>APPROACH</h4>
+                  <p>We conducted a full brand audit, refining their visual identity and narrative. The website was rebuilt with a focus on education and seamless user experience. Social media campaigns extended the brand voice through authentic stories, testimonials, and expert-led webinars.</p>
+                </div>
+                <div class="outcome-block">
+                  <h4>OUTCOME</h4>
+                  <p>The strategy led to a <span style="color: #28a745; font-weight: 700;">300% increase</span> in site traffic and <span style="color: #28a745; font-weight: 700;">250% growth</span> in followers, alongside a surge of positive customer feedback reflecting stronger trust and engagement.</p>
+                </div>
+              </div>
             </div>
-            <div class="case-text-block">
-              <h4>CHALLENGE</h4>
-              <p>To make complex microbiome insights accessible while differentiating in a fast-growing wellness market.
-              </p>
-            </div>
-            <div class="case-text-block">
-              <h4>APPROACH</h4>
-              <p>We conducted a full brand audit, refining their visual identity and narrative. The website was rebuilt
-                with a focus on education and seamless user experience. Social media campaigns extended the brand voice
-                through authentic stories, testimonials, and expert-led webinars.</p>
-            </div>
-            <div class="case-text-block">
-              <h4>OUTCOME</h4>
-              <p>The strategy led to a <span style="color: #28a745; font-weight: 700;">300% increase in site
-                  traffic</span> and <span style="color: #28a745; font-weight: 700;">250% growth in followers</span>,
-                alongside a surge of positive customer feedback reflecting stronger trust and engagement.</p>
+
+            <!-- Card 2: Elioe by Watsons -->
+            <div class="case-card">
+              <div class="case-image-wrapper">
+                <img src="assets/images/case_studies/elioe.png" alt="Elioe by Watsons Case Study">
+                <span class="case-badge">CASE STUDY 02</span>
+              </div>
+              <div class="case-header">
+                <h3>
+                  <span class="client-name">Elioe</span> <span class="project-name">by Watsons</span>
+                </h3>
+              </div>
+              <div class="case-content-grid">
+                <div class="content-block">
+                  <h4>CLIENT CONTEXT</h4>
+                  <p>In Malaysia's beauty market, CR8 launched Elioe by Watsons as premium yet accessible skincare, driving in-store traffic and online sales.</p>
+                </div>
+                <div class="content-block">
+                  <h4>CHALLENGE</h4>
+                  <p>Spark widespread awareness, cement Elioe as affordable luxury, and boost sales through targeted traffic in a saturated market.</p>
+                </div>
+                <div class="content-divider"></div>
+                <div class="content-block">
+                  <h4>APPROACH</h4>
+                  <p>A virtual media briefing brought the story to life, featuring executive insights and product deep dives, securing features in leading beauty and lifestyle outlets that amplified the message.</p>
+                </div>
+                <div class="outcome-block">
+                  <h4>OUTCOME</h4>
+                  <p>The payoff was evident in heightened engagement and a strong growth foundation. Smart PR converted curiosity into loyalty, driving significant in-store traffic.</p>
+                </div>
+              </div>
             </div>
           </div>
+          <div class="vertical-divider"></div>
         </div>
+
+        <!-- Public Relations Panel -->
+        <div class="category-panel" data-category="pr">
+          <div class="case-grid">
+            <!-- Card 1: Mission Foods -->
+            <div class="case-card">
+              <div class="case-image-wrapper">
+                <img src="https://picsum.photos/id/42/800/600" alt="Mission Foods Case Study">
+                <span class="case-badge">CASE STUDY 01</span>
+              </div>
+              <div class="case-header">
+                <h3>
+                  <span class="client-name">Mission Foods</span> <span class="project-name">#PerfectTogether</span>
+                </h3>
+              </div>
+              <div class="case-content-grid">
+                <div class="content-block">
+                  <h4>CLIENT CONTEXT</h4>
+                  <p>Mission Foods wanted to strengthen their position as the go-to brand for healthy, versatile wraps in the Malaysian household market.</p>
+                </div>
+                <div class="content-block">
+                  <h4>CHALLENGE</h4>
+                  <p>Overcoming the perception that wraps are only for western cuisine and demonstrating versatility in local cooking.</p>
+                </div>
+                <div class="content-divider"></div>
+                <div class="content-block">
+                  <h4>APPROACH</h4>
+                  <p>Launched the #PerfectTogether campaign partnering with local celebrity chefs to create fusion recipes. Organized an exclusive tasting event for top media and influencers.</p>
+                </div>
+                <div class="outcome-block">
+                  <h4>OUTCOME</h4>
+                  <p>Achieved over <span style="color: #28a745; font-weight: 700;">RM 2 million</span> in PR value. The campaign won Silver at the Dragons of Malaysia for Best Use of Public Relations.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: MasterChef AI Stars -->
+            <div class="case-card">
+              <div class="case-image-wrapper">
+                <img src="https://picsum.photos/id/163/800/600" alt="MasterChef AI Stars Case Study">
+                <span class="case-badge">CASE STUDY 02</span>
+              </div>
+              <div class="case-header">
+                <h3>
+                  <span class="client-name">MasterChef</span> <span class="project-name">AI Stars</span>
+                </h3>
+              </div>
+              <div class="case-content-grid">
+                <div class="content-block">
+                  <h4>CLIENT CONTEXT</h4>
+                  <p>The iconic cooking show returned with a new AI-integrated format and needed to generate buzz among a younger, tech-savvy demographic.</p>
+                </div>
+                <div class="content-block">
+                  <h4>CHALLENGE</h4>
+                  <p>Balancing the traditional love for cooking with controversial new AI elements without alienating core viewers.</p>
+                </div>
+                <div class="content-divider"></div>
+                <div class="content-block">
+                  <h4>APPROACH</h4>
+                  <p>Integrated media solution combining traditional billboards with interactive AR social filters. Influencers competed against AI-generated recipes in real-time.</p>
+                </div>
+                <div class="outcome-block">
+                  <h4>OUTCOME</h4>
+                  <p>Record-breaking viewership for the premiere episode. Awarded "Best Media Solution" at the Spark Awards for Media Excellence.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="vertical-divider"></div>
+        </div>
+
+        <!-- Digital Presence Panel -->
+        <div class="category-panel" data-category="digital">
+          <div class="case-grid">
+            <!-- Card 1: FinTech SecurePay -->
+            <div class="case-card">
+              <div class="case-image-wrapper">
+                <img src="https://picsum.photos/id/60/800/600" alt="FinTech SecurePay Case Study">
+                <span class="case-badge">CASE STUDY 01</span>
+              </div>
+              <div class="case-header">
+                <h3>
+                  <span class="client-name">FinTech</span> <span class="project-name">SecurePay Rebrand</span>
+                </h3>
+              </div>
+              <div class="case-content-grid">
+                <div class="content-block">
+                  <h4>CLIENT CONTEXT</h4>
+                  <p>A legacy payment gateway needed to modernize its digital footprint to compete with emerging startups.</p>
+                </div>
+                <div class="content-block">
+                  <h4>CHALLENGE</h4>
+                  <p>Shedding a "corporate and stiff" image while maintaining the perception of security and reliability.</p>
+                </div>
+                <div class="content-divider"></div>
+                <div class="content-block">
+                  <h4>APPROACH</h4>
+                  <p>Complete UI/UX overhaul of the app and website. Developed a "Security made Simple" content pillar for social media, utilizing motion graphics to explain complex features.</p>
+                </div>
+                <div class="outcome-block">
+                  <h4>OUTCOME</h4>
+                  <p>User retention increased by <span style="color: #28a745; font-weight: 700;">40%</span> within 3 months. The rebrand was featured in major tech publications as a benchmark for financial UI design.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: The Grand Virtual Concierge -->
+            <div class="case-card">
+              <div class="case-image-wrapper">
+                <img src="https://picsum.photos/id/299/800/600" alt="The Grand Virtual Concierge Case Study">
+                <span class="case-badge">CASE STUDY 02</span>
+              </div>
+              <div class="case-header">
+                <h3>
+                  <span class="client-name">The Grand</span> <span class="project-name">Virtual Concierge</span>
+                </h3>
+              </div>
+              <div class="case-content-grid">
+                <div class="content-block">
+                  <h4>CLIENT CONTEXT</h4>
+                  <p>A luxury hotel chain faced reduced footfall post-pandemic and needed to reconnect with high-net-worth travelers digitally.</p>
+                </div>
+                <div class="content-block">
+                  <h4>CHALLENGE</h4>
+                  <p>Replicating the white-glove service experience in a purely digital environment before the guest even books.</p>
+                </div>
+                <div class="content-divider"></div>
+                <div class="content-block">
+                  <h4>APPROACH</h4>
+                  <p>Developed a "Virtual Concierge" campaign using personalized email marketing and an immersive 3D website tour. Targeted LinkedIn and Instagram ads focused on exclusivity.</p>
+                </div>
+                <div class="outcome-block">
+                  <h4>OUTCOME</h4>
+                  <p>Direct bookings increased by <span style="color: #28a745; font-weight: 700;">55%</span>, significantly reducing dependency on third-party booking platforms (OTAs).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="vertical-divider"></div>
+        </div>
+
       </div>
 
     </section>
@@ -1739,6 +2007,116 @@
           });
         });
       }
+    })();
+  </script>
+
+  <!-- Case Studies Tab Switching -->
+  <script>
+    (function() {
+      // Wait for Motion library to load
+      if (typeof Motion === 'undefined') {
+        console.error('Motion library not loaded for tabs');
+        return;
+      }
+
+      const { animate } = Motion;
+      const tabs = document.querySelectorAll('.case-studies-tabs .tab');
+      const panels = document.querySelectorAll('.category-panel');
+      const indicator = document.querySelector('.tab-indicator');
+
+      if (!tabs.length || !panels.length || !indicator) return;
+
+      // Initialize indicator position
+      function updateIndicator(activeTab) {
+        const rect = activeTab.getBoundingClientRect();
+        const parentRect = activeTab.parentElement.getBoundingClientRect();
+        const left = activeTab.offsetLeft;
+        const width = activeTab.offsetWidth;
+
+        animate(
+          indicator,
+          {
+            left: left + 'px',
+            width: width + 'px'
+          },
+          {
+            duration: 0.3,
+            easing: 'ease-out'
+          }
+        );
+      }
+
+      // Switch tab function
+      function switchTab(categoryId) {
+        const currentPanel = document.querySelector('.category-panel.active');
+        const newPanel = document.querySelector(`.category-panel[data-category="${categoryId}"]`);
+        const activeTab = document.querySelector(`.tab[data-category="${categoryId}"]`);
+
+        if (!currentPanel || !newPanel || currentPanel === newPanel) return;
+
+        // Update tab states
+        tabs.forEach(t => t.classList.remove('active'));
+        activeTab.classList.add('active');
+        updateIndicator(activeTab);
+
+        // Function to complete the panel switch
+        function completePanelSwitch() {
+          currentPanel.classList.remove('active');
+
+          // Fade in new panel with slight slide
+          newPanel.classList.add('active');
+          const fadeInAnimation = animate(
+            newPanel,
+            {
+              opacity: [0, 1],
+              transform: ['translateX(10px)', 'translateX(0)']
+            },
+            {
+              duration: 0.3,
+              easing: 'ease-out'
+            }
+          );
+        }
+
+        // Fade out current panel with null check
+        const fadeOutAnimation = animate(
+          currentPanel,
+          { opacity: 0 },
+          { duration: 0.15 }
+        );
+
+        // Check if animation exists and has .finished property
+        if (fadeOutAnimation && fadeOutAnimation.finished) {
+          fadeOutAnimation.finished.then(completePanelSwitch);
+        } else {
+          // Fallback: immediately switch if animation fails
+          completePanelSwitch();
+        }
+      }
+
+      // Attach click listeners
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const categoryId = this.getAttribute('data-category');
+          switchTab(categoryId);
+        });
+      });
+
+      // Set initial indicator position on load
+      const activeTab = document.querySelector('.tab.active');
+      if (activeTab) {
+        indicator.style.left = activeTab.offsetLeft + 'px';
+        indicator.style.width = activeTab.offsetWidth + 'px';
+      }
+
+      // Update indicator on window resize
+      window.addEventListener('resize', function() {
+        const activeTab = document.querySelector('.tab.active');
+        if (activeTab) {
+          indicator.style.left = activeTab.offsetLeft + 'px';
+          indicator.style.width = activeTab.offsetWidth + 'px';
+        }
+      });
     })();
   </script>
 
@@ -2023,87 +2401,32 @@
           threshold: 0.2            // Same as client logos
         });
 
-        // Case Studies - observe each row individually (following original pattern)
-        observeElement('.case-row', function(row) {
-          const img = row.querySelector('.case-image img');
-          const brand = row.querySelector('.case-brand');
-          const textBlocks = row.querySelectorAll('.case-text-block');
-          const isMobile = window.innerWidth < 768;
+        // Case Studies - animate individual cards when they scroll into view
+        observeElement('.case-card', function(card) {
+          const img = card.querySelector('.case-image-wrapper img');
+          const header = card.querySelector('.case-header');
+          const contentBlocks = card.querySelectorAll('.content-block, .content-divider, .outcome-block');
 
-          if (isMobile) {
-            // MOBILE: Batch all elements in row for performance (like original)
-            const allElements = [img, brand, ...Array.from(textBlocks)].filter(Boolean);
+          // Animate all elements in the card with stagger
+          const allElements = [img, header, ...Array.from(contentBlocks)].filter(Boolean);
 
-            if (allElements.length > 0) {
-              allElements.forEach((el, index) => {
-                animate(
-                  el,
-                  {
-                    opacity: [0, 1],
-                    transform: ['translateY(20px)', 'translateY(0)']
-                  },
-                  {
-                    duration: 0.5,
-                    delay: index * 0.08, // Quick stagger like original
-                    easing: 'ease-out'
-                  }
-                );
-              });
-            }
-
-          } else {
-            // DESKTOP: Individual animations (NO BLUR - use scale instead)
-
-            // Image entrance with scale
-            if (img) {
-              animate(
-                img,
-                {
-                  opacity: [0, 1],
-                  scale: [1.1, 1] // Subtle zoom (no blur)
-                },
-                {
-                  duration: 0.8,
-                  easing: 'ease-out'
-                }
-              );
-            }
-
-            // Brand header
-            if (brand) {
-              animate(
-                brand,
-                {
-                  opacity: [0, 1],
-                  transform: ['translateY(40px)', 'translateY(0)']
-                },
-                {
-                  duration: 0.8,
-                  delay: 0.2,
-                  easing: 'ease-out'
-                }
-              );
-            }
-
-            // Text blocks staggered
-            textBlocks.forEach((block, index) => {
-              animate(
-                block,
-                {
-                  opacity: [0, 1],
-                  transform: ['translateY(30px)', 'translateY(0)']
-                },
-                {
-                  duration: 0.8,
-                  delay: 0.4 + (index * 0.15), // Like original
-                  easing: 'ease-out'
-                }
-              );
-            });
-          }
+          allElements.forEach((el, index) => {
+            animate(
+              el,
+              {
+                opacity: [0, 1],
+                transform: ['translateY(30px)', 'translateY(0)']
+              },
+              {
+                duration: 0.6,
+                delay: index * 0.08,
+                easing: 'ease-out'
+              }
+            );
+          });
         }, {
-          rootMargin: '-10% 0px',  // Proven settings
-          threshold: 0.2
+          rootMargin: '-10% 0px',
+          threshold: 0.1
         });
 
         // Contact section - following original pattern exactly
