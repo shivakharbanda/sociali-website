@@ -696,10 +696,9 @@
 
     .tab-indicator {
       position: absolute;
-      bottom: -1px;
       height: 2px;
       background: var(--social-orange);
-      transition: left 0.3s ease, width 0.3s ease;
+      transition: left 0.3s ease, width 0.3s ease, top 0.3s ease;
     }
 
     /* Tab Panels */
@@ -2028,16 +2027,18 @@
 
       // Initialize indicator position
       function updateIndicator(activeTab) {
-        const rect = activeTab.getBoundingClientRect();
+        const tabRect = activeTab.getBoundingClientRect();
         const parentRect = activeTab.parentElement.getBoundingClientRect();
-        const left = activeTab.offsetLeft;
-        const width = activeTab.offsetWidth;
+        const left = tabRect.left - parentRect.left;
+        const width = tabRect.width;
+        const top = tabRect.bottom - parentRect.top - 1;
 
         animate(
           indicator,
           {
             left: left + 'px',
-            width: width + 'px'
+            width: width + 'px',
+            top: top + 'px'
           },
           {
             duration: 0.3,
@@ -2105,16 +2106,22 @@
       // Set initial indicator position on load
       const activeTab = document.querySelector('.tab.active');
       if (activeTab) {
-        indicator.style.left = activeTab.offsetLeft + 'px';
-        indicator.style.width = activeTab.offsetWidth + 'px';
+        const tabRect = activeTab.getBoundingClientRect();
+        const parentRect = activeTab.parentElement.getBoundingClientRect();
+        indicator.style.left = (tabRect.left - parentRect.left) + 'px';
+        indicator.style.width = tabRect.width + 'px';
+        indicator.style.top = (tabRect.bottom - parentRect.top - 1) + 'px';
       }
 
       // Update indicator on window resize
       window.addEventListener('resize', function() {
         const activeTab = document.querySelector('.tab.active');
         if (activeTab) {
-          indicator.style.left = activeTab.offsetLeft + 'px';
-          indicator.style.width = activeTab.offsetWidth + 'px';
+          const tabRect = activeTab.getBoundingClientRect();
+          const parentRect = activeTab.parentElement.getBoundingClientRect();
+          indicator.style.left = (tabRect.left - parentRect.left) + 'px';
+          indicator.style.width = tabRect.width + 'px';
+          indicator.style.top = (tabRect.bottom - parentRect.top - 1) + 'px';
         }
       });
     })();
