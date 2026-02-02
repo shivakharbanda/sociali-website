@@ -177,7 +177,7 @@
 
     .cta {
       background: var(--social-orange);
-      color: #fff;
+      color: #fff !important;
       border-radius: 999px;
       padding: 0.44rem 0.9rem;
       font-weight: 700;
@@ -331,6 +331,25 @@
       transform: translateY(30px); /* INITIAL STATE - below */
     }
 
+    /* Introduction section - INITIAL STATE (will animate on scroll) */
+    #introduction h2,
+    #introduction p {
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(30px); /* INITIAL STATE - below */
+    }
+
+    /* Offerings section - INITIAL STATE (will animate on scroll) */
+    #offerings > div:last-child > div {
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(40px); /* INITIAL STATE - below */
+    }
+
+    /* Who We Work With section - INITIAL STATE (will animate on scroll) */
+    #who-we-work-with > div:last-child > div {
+      opacity: 0; /* INITIAL STATE - hidden */
+      transform: translateY(40px); /* INITIAL STATE - below */
+    }
+
     .two-col {
       display: block;
     }
@@ -374,6 +393,7 @@
       font-size: 1.2rem;
       font-weight: 400;
       letter-spacing: 0.1em;
+      text-transform: uppercase;
     }
 
     .expertise-heading {
@@ -382,6 +402,7 @@
       line-height: 0.9;
       margin: 0;
       letter-spacing: -0.02em;
+      text-transform: uppercase;
     }
 
     .expertise-grid-new {
@@ -430,6 +451,7 @@
       letter-spacing: 0.05em;
       margin-bottom: 1rem;
       line-height: 1.3;
+      text-transform: uppercase;
     }
 
     .expertise-col ul {
@@ -482,6 +504,7 @@
       font-weight: 400;
       letter-spacing: 0.1em;
       color: var(--text);
+      text-transform: uppercase;
     }
 
     .process-heading {
@@ -491,6 +514,7 @@
       margin: 0;
       letter-spacing: -0.02em;
       color: var(--text);
+      text-transform: uppercase;
     }
 
     .timeline-wrapper {
@@ -567,6 +591,7 @@
       margin-bottom: 1rem;
       letter-spacing: 0.05em;
       line-height: 1.3;
+      text-transform: uppercase;
     }
 
     .stage-description {
@@ -665,6 +690,7 @@
       margin: 0 0 0.3rem 0;
       letter-spacing: 0.03em;
       line-height: 1.25;
+      text-transform: uppercase;
     }
 
     .award-content p {
@@ -856,7 +882,7 @@
     .contact-layout {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 2rem;
+      gap: 3rem;
       align-items: center;
       max-width: 1500px;
       margin: 0 auto;
@@ -864,71 +890,84 @@
 
     .contact-info {
       text-align: left;
-      max-width: 450px;
     }
 
-    .contact-title {
-      font-family: var(--font-body);
-      font-size: clamp(0.85rem, 2vw, 1rem);
-      font-weight: 600;
+    .contact-heading {
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.1;
+      margin: 0 0 2rem 0;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .contact-heading span {
+      font-weight: 700;
+      font-style: normal;
       color: var(--social-orange);
-      margin: 0 0 0.8rem 0;
+    }
+
+    .contact-divider {
+      border-top: 1px solid rgba(38, 38, 38, 0.15);
+      padding-top: 1.5rem;
+      margin-top: 0.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .contact-role {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: translateY(30px); /* INITIAL STATE - below */
+      color: rgba(38, 38, 38, 0.5);
+      margin: 0 0 0.3rem 0;
     }
 
-    .contact-name-first {
+    .contact-name {
       font-family: var(--font-body);
-      font-size: clamp(2rem, 6vw, 4rem);
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
       font-weight: 800;
+      line-height: 1.1;
+      margin: 0 0 1.2rem 0;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .contact-name .contact-name-first {
       color: var(--social-orange);
-      margin: 0;
-      line-height: 0.9;
-      letter-spacing: -0.02em;
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: translateY(40px); /* INITIAL STATE - below */
     }
 
-    .contact-name-last {
-      font-family: var(--font-body);
-      font-size: clamp(2.5rem, 8vw, 5.5rem);
-      font-weight: 900;
+    .contact-name .contact-name-last {
       color: var(--text);
-      margin: 0.2rem 0 1.5rem 0;
-      line-height: 0.9;
-      letter-spacing: -0.02em;
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: translateY(40px); /* INITIAL STATE - below */
     }
 
-    .contact-phone,
-    .contact-email,
-    .contact-instagram {
+    .contact-link {
       display: flex;
       align-items: center;
       gap: 0.6rem;
       font-family: var(--font-body);
-      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      font-size: 0.95rem;
       color: var(--social-orange);
       text-decoration: none;
       margin-bottom: 0.5rem;
       font-weight: 400;
       transition: opacity 0.3s ease;
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: translateX(-30px); /* INITIAL STATE - from left */
+      opacity: 0;
+      transform: translateX(-20px);
     }
 
-    .contact-phone:hover,
-    .contact-email:hover,
-    .contact-instagram:hover {
+    .contact-link:hover {
       opacity: 0.7;
     }
 
     .contact-icon {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       flex-shrink: 0;
     }
 
@@ -938,19 +977,115 @@
       fill: var(--social-orange);
     }
 
-    .contact-image {
-      width: 100%;
+    .contact-social-icons {
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+      opacity: 0;
     }
 
-    .contact-image img {
+    .contact-social-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(38, 38, 38, 0.2);
+      background: transparent;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .contact-social-icon svg {
+      fill: var(--text);
+      transition: fill 0.3s ease;
+    }
+
+    .contact-social-icon:hover {
+      background: var(--social-orange);
+      border-color: var(--social-orange);
+    }
+
+    .contact-social-icon:hover svg {
+      fill: #fff;
+    }
+
+    .contact-form-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(38, 38, 38, 0.08);
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    .contact-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .contact-form-field {
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-form-card label {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(38, 38, 38, 0.5);
+      margin-bottom: 0.4rem;
+    }
+
+    .contact-form-card input,
+    .contact-form-card textarea {
       width: 100%;
-      height: auto;
-      object-fit: contain;
-      opacity: 0; /* INITIAL STATE - hidden */
-      transform: scale(1.1); /* INITIAL STATE - zoomed */
+      border: none;
+      border-bottom: 1px solid rgba(38, 38, 38, 0.15);
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text);
+      padding: 0.5rem 0;
+      outline: none;
+      transition: border-color 0.3s ease;
+      resize: none;
+    }
+
+    .contact-form-card input::placeholder,
+    .contact-form-card textarea::placeholder {
+      color: rgba(38, 38, 38, 0.3);
+    }
+
+    .contact-form-card input:focus,
+    .contact-form-card textarea:focus {
+      border-bottom-color: var(--social-orange);
+    }
+
+    .contact-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--social-orange);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      margin-top: 0.5rem;
+    }
+
+    .contact-submit:hover {
+      opacity: 0.9;
+      transform: translateX(4px);
     }
 
     /* Footer - FINAL STATE (visible) */
@@ -1096,17 +1231,8 @@
       }
 
       .contact-layout {
-        grid-template-columns: 450px 550px;
-        gap: 2rem;
-        justify-content: center;
-      }
-
-      .contact-image img {
-        max-width: none;
-        width: 100%;
-        transform: scale(1.0);
-        transform-origin: center center;
-        object-position: center center;
+        grid-template-columns: 5fr 7fr;
+        gap: 3rem;
       }
     }
 
@@ -1373,7 +1499,7 @@
 
     <!-- introduction / value proposition -->
     <section id="introduction" class="wrap" style="text-align: center; max-width: 900px;">
-      <h2 style="margin-bottom: 1.5rem;">Visibility + Clarity + Credibility</h2>
+      <h2 style="margin-bottom: 1.5rem; text-transform: uppercase;">Visibility + Clarity + Credibility</h2>
       <p style="color:rgba(38,38,38,0.85); font-size:1.125rem; line-height:1.8; max-width:75ch; margin:0 auto;">
         In an increasingly crowded and fast-moving landscape, brands don't just need visibility — they need clarity, credibility, and cultural relevance.
       </p>
@@ -1395,7 +1521,7 @@
         <p style="color:rgba(38,38,38,0.85); margin-top:1rem; max-width:62ch; font-size:1.0625rem; line-height:1.7;">
           What sets us apart is our ability to translate complex business objectives into compelling narratives that influence perception, inspire trust, and drive measurable outcomes.
         </p>
-        <p style="color:rgba(38,38,38,0.9); margin-top:1.5rem; max-width:62ch; font-size:1.0625rem; line-height:1.7; font-weight: 500;">
+        <p style="color:#F04600; margin-top:1.5rem; max-width:62ch; font-size:1.0625rem; line-height:1.7; font-weight: 500;">
           Based in Kuala Lumpur. Working globally.
         </p>
       </div>
@@ -1409,15 +1535,15 @@
     <section id="capabilities" class="wrap">
       <div class="expertise-header">
         <div class="expertise-title">
-          <span class="expertise-label">CORE</span>
-          <h2 class="expertise-heading">CAPABILITIES</h2>
+          <span class="expertise-label">Core</span>
+          <h2 class="expertise-heading">Capabilities</h2>
         </div>
       </div>
 
       <div class="expertise-grid-new" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
         <div class="expertise-col">
           <img src="assets/images/expertise/2148416454.jpg" alt="Brand Strategy & Identity">
-          <h3>BRAND STRATEGY<br>& IDENTITY</h3>
+          <h3>Brand Strategy<br>& Identity</h3>
           <ul>
             <li>Brand profiling & positioning</li>
             <li>Brand architecture & narrative development</li>
@@ -1429,7 +1555,7 @@
 
         <div class="expertise-col">
           <img src="assets/images/expertise/2148416454.jpg" alt="Creative Content & Production">
-          <h3>CREATIVE CONTENT<br>& PRODUCTION</h3>
+          <h3>Creative Content<br>& Production</h3>
           <ul>
             <li>Content strategy & editorial planning</li>
             <li>Copywriting & thought leadership</li>
@@ -1441,7 +1567,7 @@
 
         <div class="expertise-col">
           <img src="assets/images/expertise/91925.jpg" alt="Public Relations & Communications">
-          <h3>PUBLIC RELATIONS<br>& COMMUNICATIONS</h3>
+          <h3>Public Relations<br>& Communications</h3>
           <ul>
             <li>Strategic PR campaigns</li>
             <li>Media relations & press outreach</li>
@@ -1453,7 +1579,7 @@
 
         <div class="expertise-col">
           <img src="assets/images/expertise/17729.jpg" alt="Digital Presence & Growth">
-          <h3>DIGITAL PRESENCE<br>& GROWTH</h3>
+          <h3>Digital Presence<br>& Growth</h3>
           <ul>
             <li>Social media strategy & management</li>
             <li>Website & UX copy development</li>
@@ -1464,7 +1590,7 @@
 
         <div class="expertise-col">
           <img src="assets/images/expertise/137640.jpg" alt="Investor & Stakeholder Communications">
-          <h3>INVESTOR &<br>STAKEHOLDER COMMS</h3>
+          <h3>Investor &<br>Stakeholder Comms</h3>
           <ul>
             <li>Investor relations strategy</li>
             <li>Pitch decks & capital raise narratives</li>
@@ -1476,7 +1602,7 @@
 
         <div class="expertise-col">
           <img src="assets/images/expertise/137640.jpg" alt="Consultancy & Workshops">
-          <h3>CONSULTANCY<br>& WORKSHOPS</h3>
+          <h3>Consultancy<br>& Workshops</h3>
           <ul>
             <li>Executive advisory & creative consulting</li>
             <li>Brand, content & PR workshops</li>
@@ -1491,14 +1617,14 @@
     <section id="offerings" class="wrap">
       <div class="expertise-header">
         <div class="expertise-title">
-          <span class="expertise-label">SIGNATURE</span>
-          <h2 class="expertise-heading">OFFERINGS</h2>
+          <span class="expertise-label">Signature</span>
+          <h2 class="expertise-heading">Offerings</h2>
         </div>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 2rem;">
         <div style="border: 2px solid #262626; padding: 2rem; background: rgba(255,255,255,0.5);">
-          <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--social-orange);">Brand Authority System™</h3>
+          <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--social-orange); text-transform: uppercase;">Brand Authority System</h3>
           <p style="color: rgba(38,38,38,0.85); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.25rem;">
             For brands ready to be taken seriously.
           </p>
@@ -1508,7 +1634,7 @@
         </div>
 
         <div style="border: 2px solid #262626; padding: 2rem; background: rgba(255,255,255,0.5);">
-          <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--social-orange);">Investor Confidence Suite</h3>
+          <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--social-orange); text-transform: uppercase;">Investor Confidence Suite</h3>
           <p style="color: rgba(38,38,38,0.85); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.25rem;">
             For investor-facing brands, funds, and publicly listed companies.
           </p>
@@ -1518,7 +1644,7 @@
         </div>
 
         <div style="border: 2px solid #262626; padding: 2rem; background: rgba(255,255,255,0.5);">
-          <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--social-orange);">Cultural Relevance Campaigns</h3>
+          <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--social-orange); text-transform: uppercase;">Cultural Relevance Campaigns</h3>
           <p style="color: rgba(38,38,38,0.85); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.25rem;">
             For brands seeking meaningful visibility.
           </p>
@@ -1533,8 +1659,8 @@
     <section id="who-we-work-with" class="wrap">
       <div class="expertise-header">
         <div class="expertise-title">
-          <span class="expertise-label">WHO WE</span>
-          <h2 class="expertise-heading">WORK WITH</h2>
+          <span class="expertise-label">Who We</span>
+          <h2 class="expertise-heading">Work With</h2>
         </div>
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
@@ -1565,8 +1691,8 @@
     <section id="process" class="wrap">
       <div class="process-header">
         <div class="process-title">
-          <span class="process-label">HOW WE</span>
-          <h2 class="process-heading">WORK</h2>
+          <span class="process-label">How We</span>
+          <h2 class="process-heading">Work</h2>
         </div>
       </div>
 
@@ -1589,35 +1715,35 @@
           <!-- Stages with descriptions -->
           <div class="stages-container" id="stagesContainer">
             <div class="stage" data-index="0">
-              <div class="stage-title">DISCOVER</div>
+              <div class="stage-title">Discover</div>
               <div class="stage-description">
                 Deep research, insight gathering, and opportunity mapping. We uncover your brand's true essence, understand your market landscape, and identify the strategic opportunities that will set you apart.
               </div>
             </div>
 
             <div class="stage" data-index="1">
-              <div class="stage-title">STRATEGISE</div>
+              <div class="stage-title">Strategise</div>
               <div class="stage-description">
                 Narrative development, channel planning, and roadmap design. We transform insights into actionable strategies, crafting messaging frameworks and communication blueprints that drive measurable results.
               </div>
             </div>
 
             <div class="stage" data-index="2">
-              <div class="stage-title">CREATE</div>
+              <div class="stage-title">Create</div>
               <div class="stage-description">
                 Content, campaigns, and communications crafted with intent. We bring strategy to life through compelling creative work that resonates with your audience and reflects your brand's unique value.
               </div>
             </div>
 
             <div class="stage" data-index="3">
-              <div class="stage-title">EXECUTE</div>
+              <div class="stage-title">Execute</div>
               <div class="stage-description">
                 Launch, manage, and optimise across platforms. We orchestrate seamless implementation across all touchpoints, ensuring every element works in harmony to deliver maximum impact.
               </div>
             </div>
 
             <div class="stage" data-index="4">
-              <div class="stage-title">REFINE</div>
+              <div class="stage-title">Refine</div>
               <div class="stage-description">
                 Measure performance, evolve strategy, and scale impact. We continuously analyze results, optimize approaches, and adapt to ensure sustained growth and relevance in an ever-changing landscape.
               </div>
@@ -1631,8 +1757,8 @@
     <section id="clients" class="wrap">
       <div class="process-header">
         <div class="process-title">
-          <span class="process-label">OUR</span>
-          <h2 class="process-heading">CLIENTS</h2>
+          <span class="process-label">Our</span>
+          <h2 class="process-heading">Clients</h2>
         </div>
       </div>
       <div class="clients">
@@ -1661,8 +1787,8 @@
     <section id="awards" class="wrap">
       <div class="process-header">
         <div class="process-title">
-          <span class="process-label">PAST AWARDS &</span>
-          <h2 class="process-heading">ACCOLADES</h2>
+          <span class="process-label">Past Awards &</span>
+          <h2 class="process-heading">Accolades</h2>
         </div>
       </div>
       <div class="awards-content">
@@ -1678,7 +1804,7 @@
               </svg>
             </div>
             <div class="award-content">
-              <h3>MALAYSIA MEDIA AWARDS</h3>
+              <h3>Malaysia Media Awards</h3>
               <p>Best Use of Sponsorship for Pelanm in Fantasia</p>
             </div>
           </li>
@@ -1690,7 +1816,7 @@
               </svg>
             </div>
             <div class="award-content">
-              <h3>SPARK AWARDS FOR MEDIA EXCELLENCE</h3>
+              <h3>Spark Awards for Media Excellence</h3>
               <p>Best Use of Sponsorship for Pelanm in Fantasia</p>
             </div>
           </li>
@@ -1702,7 +1828,7 @@
               </svg>
             </div>
             <div class="award-content">
-              <h3>MALAYSIAN MEDIA AWARDS</h3>
+              <h3>Malaysian Media Awards</h3>
               <p>Best Use of Sponsorship for MasterChef Malaysia AI Stars</p>
             </div>
           </li>
@@ -1714,7 +1840,7 @@
               </svg>
             </div>
             <div class="award-content">
-              <h3>DRAGONS OF MALAYSIA - SILVER</h3>
+              <h3>Dragons of Malaysia - Silver</h3>
               <p>Best Use of Public Relations Mission Foods #PerfectTogether</p>
             </div>
           </li>
@@ -1726,7 +1852,7 @@
               </svg>
             </div>
             <div class="award-content">
-              <h3>SPARK AWARDS FOR MEDIA EXCELLENCE</h3>
+              <h3>Spark Awards for Media Excellence</h3>
               <p>Spark Awards for Media Excellence - Silver | Best Media Solution - Integrated Media for #KesangKasang
               </p>
             </div>
@@ -1739,7 +1865,7 @@
               </svg>
             </div>
             <div class="award-content">
-              <h3>SPARK AWARDS FOR MEDIA EXCELLENCE</h3>
+              <h3>Spark Awards for Media Excellence</h3>
               <p>Best Programme Promotion - Fear Factor Selebriti Malaysia</p>
             </div>
           </li>
@@ -1751,7 +1877,7 @@
               </svg>
             </div>
             <div class="award-content">
-              <h3>SPARK AWARDS FOR MEDIA EXCELLENCE</h3>
+              <h3>Spark Awards for Media Excellence</h3>
               <p>Best Media Solution - Integrated Media for Master Chef Malaysia AI Stars</p>
             </div>
           </li>
@@ -1763,8 +1889,8 @@
     <section id="case-studies" class="wrap">
       <div class="process-header">
         <div class="process-title">
-          <span class="process-label">CLIENT</span>
-          <h2 class="process-heading">SUCCESS STORIES</h2>
+          <span class="process-label">Client</span>
+          <h2 class="process-heading">Success Stories</h2>
         </div>
       </div>
 
@@ -1997,38 +2123,82 @@
     <section id="contact-section" class="wrap">
       <div class="process-header">
         <div class="process-title">
-          <span class="process-label">LET'S</span>
-          <h2 class="process-heading">CONNECT</h2>
+          <span class="process-label">Let's</span>
+          <h2 class="process-heading">Connect</h2>
         </div>
       </div>
 
       <div class="contact-layout">
+        <!-- Left column -->
         <div class="contact-info">
-          <div class="contact-title">CREATIVE DIRECTOR</div>
-          <h2 class="contact-name-first">PREETA</h2>
-          <h2 class="contact-name-last">SHARENIA</h2>
-          <a href="mailto:preeta@socialiconsultancy.com" class="contact-email">
-            <span class="contact-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+          <h2 class="contact-heading">
+            Start your brand <br/>
+            <span>momentum.</span>
+          </h2>
+
+          <div class="contact-divider">
+            <p class="contact-role">Creative Director</p>
+            <h3 class="contact-name"><span class="contact-name-first">PREETA</span><br/><span class="contact-name-last">SHARENIA</span></h3>
+            <a href="mailto:preeta@socialiconsultancy.com" class="contact-link">
+              <span class="contact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              </span>
+              <span>preeta@socialiconsultancy.com</span>
+            </a>
+            <a href="https://www.instagram.com/socialiconsultancy/?hl=en" target="_blank" rel="noopener noreferrer" class="contact-link">
+              <span class="contact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+                </svg>
+              </span>
+              <span>@socialiconsultancy</span>
+            </a>
+          </div>
+
+          <div class="contact-social-icons">
+            <a href="#" class="contact-social-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
               </svg>
-            </span>
-            <span>preeta@socialiconsultancy.com</span>
-          </a>
-          <a href="https://www.instagram.com/socialiconsultancy/?hl=en" target="_blank" rel="noopener noreferrer"
-            class="contact-instagram">
-            <span class="contact-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
+            </a>
+            <a href="https://www.instagram.com/socialiconsultancy/?hl=en" target="_blank" rel="noopener noreferrer" class="contact-social-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
               </svg>
-            </span>
-            <span>@socialiconsultancy</span>
-          </a>
+            </a>
+          </div>
         </div>
-        <div class="contact-image">
-          <img src="assets/images/tablet mockup.png" alt="Contact Preeta Sharenia">
+
+        <!-- Right column: Form card -->
+        <div class="contact-form-card">
+          <form action="#" method="POST">
+            <div class="contact-form-row">
+              <div class="contact-form-field">
+                <label for="contact-name-input">Full Name</label>
+                <input type="text" id="contact-name-input" name="name" placeholder="John Doe"/>
+              </div>
+              <div class="contact-form-field">
+                <label for="contact-company">Company</label>
+                <input type="text" id="contact-company" name="company" placeholder="Acme Corp"/>
+              </div>
+            </div>
+            <div class="contact-form-field">
+              <label for="contact-email-input">Email Address</label>
+              <input type="email" id="contact-email-input" name="email" placeholder="hello@company.com"/>
+            </div>
+            <div class="contact-form-field">
+              <label for="contact-message">How can we help?</label>
+              <textarea id="contact-message" name="message" rows="4" placeholder="Tell us about your brand goals..."></textarea>
+            </div>
+            <button type="submit" class="contact-submit">
+              Send Message
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </form>
         </div>
       </div>
     </section>
@@ -2334,6 +2504,65 @@
           });
         });
 
+        // Introduction section animation
+        observeElement('#introduction', function(section) {
+          const heading = section.querySelector('h2');
+          const paragraphs = section.querySelectorAll('p');
+
+          const allElements = [heading, ...paragraphs].filter(Boolean);
+
+          allElements.forEach((el, index) => {
+            animate(
+              el,
+              {
+                opacity: [0, 1],
+                transform: ['translateY(30px)', 'translateY(0)']
+              },
+              {
+                duration: 0.6,
+                delay: index * 0.15,
+                easing: 'ease-out'
+              }
+            );
+          });
+        });
+
+        // Offerings section - individual card animations
+        observeElement('#offerings > div:last-child > div', function(card) {
+          animate(
+            card,
+            {
+              opacity: [0, 1],
+              transform: ['translateY(40px)', 'translateY(0)']
+            },
+            {
+              duration: 0.7,
+              easing: 'ease-out'
+            }
+          );
+        }, {
+          rootMargin: '-5% 0px',
+          threshold: 0.1
+        });
+
+        // Who We Work With section - individual card animations
+        observeElement('#who-we-work-with > div:last-child > div', function(card) {
+          animate(
+            card,
+            {
+              opacity: [0, 1],
+              transform: ['translateY(40px)', 'translateY(0)']
+            },
+            {
+              duration: 0.7,
+              easing: 'ease-out'
+            }
+          );
+        }, {
+          rootMargin: '-5% 0px',
+          threshold: 0.1
+        });
+
         // Expertise section - individual card animations
         // Each card animates when IT enters viewport (perfect for mobile stacking)
         observeElement('.expertise-col', function(card) {
@@ -2535,81 +2764,37 @@
           threshold: 0.1
         });
 
-        // Contact section - following original pattern exactly
+        // Contact section
         observeElement('#contact-section', function(section) {
-          const title = section.querySelector('.contact-title');
-          const firstName = section.querySelector('.contact-name-first');
-          const lastName = section.querySelector('.contact-name-last');
-          const contactLinks = section.querySelectorAll('.contact-phone, .contact-email, .contact-instagram');
-          const contactImage = section.querySelector('.contact-image img');
+          const heading = section.querySelector('.contact-heading');
+          const divider = section.querySelector('.contact-divider');
+          const name = section.querySelector('.contact-name');
+          const links = section.querySelectorAll('.contact-link');
+          const socialIcons = section.querySelector('.contact-social-icons');
+          const formCard = section.querySelector('.contact-form-card');
 
-          // 1. Title fade + slide-up (like original)
-          if (title) {
-            animate(
-              title,
-              {
-                opacity: [0, 1],
-                transform: ['translateY(30px)', 'translateY(0)']
-              },
-              {
-                duration: 0.8,
-                easing: 'ease-out'
-              }
-            );
+          if (heading) {
+            animate(heading, { opacity: [0, 1], transform: ['translateY(30px)', 'translateY(0)'] }, { duration: 0.8, easing: 'ease-out' });
           }
-
-          // 2. Names staggered entrance (like original)
-          if (firstName && lastName) {
-            [firstName, lastName].forEach((name, index) => {
-              animate(
-                name,
-                {
-                  opacity: [0, 1],
-                  transform: ['translateY(40px)', 'translateY(0)']
-                },
-                {
-                  duration: 1.0,
-                  delay: index * 0.15, // 150ms stagger like original
-                  easing: 'ease-out'
-                }
-              );
+          if (divider) {
+            animate(divider, { opacity: [0, 1], transform: ['translateY(20px)', 'translateY(0)'] }, { duration: 0.6, delay: 0.3, easing: 'ease-out' });
+          }
+          if (name) {
+            animate(name, { opacity: [0, 1], transform: ['translateY(20px)', 'translateY(0)'] }, { duration: 0.6, delay: 0.4, easing: 'ease-out' });
+          }
+          if (links.length > 0) {
+            links.forEach((link, index) => {
+              animate(link, { opacity: [0, 1], transform: ['translateX(-20px)', 'translateX(0)'] }, { duration: 0.6, delay: 0.5 + index * 0.1, easing: 'ease-out' });
             });
           }
-
-          // 3. Contact links slide-in from left (like original)
-          if (contactLinks.length > 0) {
-            contactLinks.forEach((link, index) => {
-              animate(
-                link,
-                {
-                  opacity: [0, 1],
-                  transform: ['translateX(-30px)', 'translateX(0)']
-                },
-                {
-                  duration: 0.8,
-                  delay: index * 0.12, // 120ms stagger like original
-                  easing: 'ease-out'
-                }
-              );
-            });
+          if (socialIcons) {
+            animate(socialIcons, { opacity: [0, 1] }, { duration: 0.6, delay: 0.7, easing: 'ease-out' });
           }
-
-          // 4. Image scale (skip blur for mobile compatibility)
-          if (contactImage) {
-            animate(
-              contactImage,
-              {
-                opacity: [0, 1],
-                scale: [1.1, 1] // Subtle zoom (no blur)
-              },
-              {
-                duration: 1.2,
-                easing: 'ease-out'
-              }
-            );
+          if (formCard) {
+            animate(formCard, { opacity: [0, 1], transform: ['translateX(30px)', 'translateX(0)'] }, { duration: 0.8, delay: 0.2, easing: 'ease-out' });
           }
         }, {
-          rootMargin: '-10% 0px',  // Proven settings
+          rootMargin: '-10% 0px',
           threshold: 0.2
         });
       });
