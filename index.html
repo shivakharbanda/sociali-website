@@ -1088,6 +1088,39 @@
       transform: translateX(4px);
     }
 
+    .contact-form-card.submitted input:invalid,
+    .contact-form-card.submitted textarea:invalid {
+      border-color: #e74c3c;
+    }
+
+    .form-error {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    #my-form-status {
+      text-align: center;
+      font-weight: 600;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+
+    #my-form-status.success {
+      color: #27ae60;
+    }
+
+    #my-form-status.error {
+      color: #e74c3c;
+    }
+
+    .contact-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     /* Footer - FINAL STATE (visible) */
     footer {
       border-top: 4px solid var(--social-orange);
@@ -2173,24 +2206,28 @@
 
         <!-- Right column: Form card -->
         <div class="contact-form-card">
-          <form action="#" method="POST">
+          <form id="my-form" action="https://formspree.io/f/xaqbkjeq" method="POST" novalidate>
             <div class="contact-form-row">
               <div class="contact-form-field">
                 <label for="contact-name-input">Full Name</label>
-                <input type="text" id="contact-name-input" name="name" placeholder="John Doe"/>
+                <input type="text" id="contact-name-input" name="name" placeholder="John Doe" required/>
+                <p class="form-error" id="name-error">Please enter your full name.</p>
               </div>
               <div class="contact-form-field">
                 <label for="contact-company">Company</label>
-                <input type="text" id="contact-company" name="company" placeholder="Acme Corp"/>
+                <input type="text" id="contact-company" name="company" placeholder="Acme Corp" required/>
+                <p class="form-error" id="company-error">Please enter your company name.</p>
               </div>
             </div>
             <div class="contact-form-field">
               <label for="contact-email-input">Email Address</label>
-              <input type="email" id="contact-email-input" name="email" placeholder="hello@company.com"/>
+              <input type="email" id="contact-email-input" name="email" placeholder="hello@company.com" required/>
+              <p class="form-error" id="email-error">Please enter a valid email address.</p>
             </div>
             <div class="contact-form-field">
               <label for="contact-message">How can we help?</label>
-              <textarea id="contact-message" name="message" rows="4" placeholder="Tell us about your brand goals..."></textarea>
+              <textarea id="contact-message" name="message" rows="4" placeholder="Tell us about your brand goals..." required></textarea>
+              <p class="form-error" id="message-error">Please enter a message.</p>
             </div>
             <button type="submit" class="contact-submit">
               Send Message
@@ -2198,6 +2235,7 @@
                 <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
               </svg>
             </button>
+            <p id="my-form-status"></p>
           </form>
         </div>
       </div>
@@ -2796,6 +2834,83 @@
         }, {
           rootMargin: '-10% 0px',
           threshold: 0.2
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var form = document.getElementById("my-form");
+      var status = document.getElementById("my-form-status");
+      var submitBtn = form.querySelector(".contact-submit");
+
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      function clearErrors() {
+        var errors = form.querySelectorAll(".form-error");
+        for (var i = 0; i < errors.length; i++) {
+          errors[i].style.display = "none";
+        }
+        form.closest(".contact-form-card").classList.remove("submitted");
+      }
+
+      function showError(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = "block";
+      }
+
+      function validate() {
+        clearErrors();
+        var valid = true;
+        var name = form.querySelector("#contact-name-input").value.trim();
+        var company = form.querySelector("#contact-company").value.trim();
+        var email = form.querySelector("#contact-email-input").value.trim();
+        var message = form.querySelector("#contact-message").value.trim();
+
+        if (!name) { showError("name-error"); valid = false; }
+        if (!company) { showError("company-error"); valid = false; }
+        if (!email || !emailRegex.test(email)) { showError("email-error"); valid = false; }
+        if (!message) { showError("message-error"); valid = false; }
+
+        if (!valid) {
+          form.closest(".contact-form-card").classList.add("submitted");
+        }
+        return valid;
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        status.textContent = "";
+        status.className = "";
+
+        if (!validate()) return;
+
+        submitBtn.disabled = true;
+        var data = new FormData(form);
+
+        fetch(form.action, {
+          method: "POST",
+          body: data,
+          headers: { "Accept": "application/json" }
+        }).then(function (response) {
+          if (response.ok) {
+            status.textContent = "Thanks! Your message has been sent.";
+            status.className = "success";
+            form.reset();
+            clearErrors();
+          } else {
+            return response.json().then(function (json) {
+              var msg = (json.errors && json.errors.map(function (e) { return e.message; }).join(", ")) || "Something went wrong. Please try again.";
+              status.textContent = msg;
+              status.className = "error";
+            });
+          }
+        }).catch(function () {
+          status.textContent = "Something went wrong. Please try again.";
+          status.className = "error";
+        }).finally(function () {
+          submitBtn.disabled = false;
         });
       });
     })();
