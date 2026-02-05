@@ -1480,6 +1480,82 @@
         padding: 10px 0;
       }
     }
+
+    /* AI Automations Section */
+    .ai-section-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .ai-mesh-visual {
+      opacity: 0;
+      transform: scale(0.8);
+      order: -1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .ai-mesh-visual img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+    }
+
+    .ai-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .ai-card {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .ai-card-number {
+      font-family: var(--font-body);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--social-orange);
+      margin-bottom: 0.5rem;
+    }
+
+    .ai-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .ai-card p {
+      color: rgba(38,38,38,0.78);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    @media(min-width:640px) {
+      .ai-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem 2.5rem;
+      }
+    }
+
+    @media(min-width:1024px) {
+      .ai-section-layout {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        align-items: center;
+        gap: 3rem;
+      }
+
+      .ai-mesh-visual {
+        order: 0;
+      }
+    }
   </style>
 </head>
 
@@ -1495,6 +1571,7 @@
         <a href="#about">About</a>
         <a href="#capabilities">Capabilities</a>
         <a href="#offerings">Offerings</a>
+        <a href="#ai-automations">AI Automations</a>
         <a href="#process">How We Work</a>
         <a href="#case-studies">Work</a>
         <a class="cta" href="#contact-section">Get in touch</a>
@@ -1510,6 +1587,7 @@
       <a href="#about">About</a>
       <a href="#capabilities">Capabilities</a>
       <a href="#offerings">Offerings</a>
+      <a href="#ai-automations">AI Automations</a>
       <a href="#process">How We Work</a>
       <a href="#case-studies">Work</a>
       <a class="cta" href="#contact-section" style="display:block; margin-top:0.5rem;">Get in touch</a>
@@ -1686,6 +1764,53 @@
           </p>
         </div>
       </div>
+    </section>
+
+    <!-- AI Driven Business Automations -->
+    <section id="ai-automations" class="wrap">
+      <div class="expertise-header">
+        <div class="expertise-title">
+          <span class="expertise-label">AI-Driven</span>
+          <h2 class="expertise-heading">Business Automations</h2>
+        </div>
+      </div>
+
+      <div class="ai-section-layout">
+        <div class="ai-cards-grid">
+          <div class="ai-card">
+            <div class="ai-card-number">01</div>
+            <h3>Automated Call Handler</h3>
+            <p>
+              Smart voice agents that answer, qualify, and support customers automatically, so you close more opportunities without lifting a finger. Delivers human-like conversations at scale, keeping customers happy while your team focuses on growth.
+            </p>
+          </div>
+          <div class="ai-card">
+            <div class="ai-card-number">02</div>
+            <h3>Personalized Email Marketing</h3>
+            <p>
+              Personalized email campaigns that adapt to each customer — boosting opens, clicks, and revenue without manual effort. AI-generated emails tailored to every user's behavior, turning cold lists into warm leads and predictable sales.
+            </p>
+          </div>
+          <div class="ai-card">
+            <div class="ai-card-number">03</div>
+            <h3>AI WhatsApp Chatbots</h3>
+            <p>
+              AI WhatsApp chatbots that give instant, personalized replies — reducing support workload while keeping customers delighted. It understands queries and responds contextually, turning every message into a sales or support win.
+            </p>
+          </div>
+          <div class="ai-card">
+            <div class="ai-card-number">04</div>
+            <h3>Social Media Automation</h3>
+            <p>
+              AI that creates and posts your social content automatically — keeping your brand active without you lifting a finger. It analyzes trends and generates posts that fit your brand voice, saving hours every week, so your business stays consistent and visible effortlessly.
+            </p>
+          </div>
+        </div>
+        <div class="ai-mesh-visual">
+          <img src="assets/images/ai-mesh.png" alt="" aria-hidden="true">
+        </div>
+      </div>
+
     </section>
 
     <!-- who we work with -->
@@ -2582,6 +2707,22 @@
           rootMargin: '-5% 0px',
           threshold: 0.1
         });
+
+        // AI Automations - mesh image animation
+        observeElement('.ai-mesh-visual', function(el) {
+          animate(el, {
+            opacity: [0, 1],
+            transform: ['scale(0.8)', 'scale(1)']
+          }, { duration: 0.8, easing: 'ease-out' });
+        });
+
+        // AI Automations - card animations
+        observeElement('.ai-card', function(card) {
+          animate(card, {
+            opacity: [0, 1],
+            transform: ['translateY(40px)', 'translateY(0)']
+          }, { duration: 0.7, easing: 'ease-out' });
+        }, { rootMargin: '-5% 0px', threshold: 0.1 });
 
         // Who We Work With section - individual card animations
         observeElement('#who-we-work-with > div:last-child > div', function(card) {
